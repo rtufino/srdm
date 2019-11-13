@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1> {{ materia.pk }}</h1>
+    <h2>Estudiantes</h2>
+
+    <table class="table">
+        <tr>
+            <th>Nombre del estudiante</th>
+            <th>Número de cédula</th>
+            <th>Documento</th>
+        <tr>
+
+        <tr>
+
+            {% for m in alumnos %}
+
+                {% for e in m %}
+                    <td>{{ e }}</td>
+                {% endfor %}
+
+
+
+
+
+
+                </tr>
+
+
+            {% endfor %}
+
+
+    </table>
+
+
+    <h2>Generar Reportes</h2>
+
+    <a href="{% url 'documentos_pdf' materia 'ADM' %}" class="btn btn-success"> ADM</a>
+    <a href="{% url 'documentos_pdf' materia 'REVEX' %}" class="btn btn-success"> REVEX</a>
+    <a href="{% url 'documentos_pdf' materia 'RN30' %}" class="btn btn-success"> RN30</a>
+
+
+{% endblock %}
+

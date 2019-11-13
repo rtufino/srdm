@@ -1,0 +1,39 @@
+{% load static %}
+
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Registro Documentos Microcurriculares{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+    {# CSS Bootstrap #}
+    {% bootstrap_css %}
+</head>
+<body class="bg-light">
+<div class="container">
+
+
+
+    {% if user.is_authenticated %}
+        <p class="pt-3">Autenticado como <strong>{{ user.first_name }}</strong>. <a href="{% url 'logout' %}">Salir</a>.
+        </p>
+    {% endif %}
+
+
+    {% block content %}
+
+    {% endblock %}
+
+    <br/>
+    <footer>
+        <a target="_blank" href="http://rodrigotufino.info">© Rodrigo Tufiño</a>
+        /
+        <a target="_blank" href="http://julioproano.info">© Julio Proaño</a>
+    </footer>
+</div>
+</body>
+</html>

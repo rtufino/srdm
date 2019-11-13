@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h2>Firmar</h2>
+
+    <div class="alert alert-{{ alerta }}" role="alert">
+        {{ mensaje }}
+    </div>
+
+    <a class="btn btn-primary" href="{% url 'estudiante:home' %}">Regresar</a>
+
+{% endblock %}

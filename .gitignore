@@ -1,0 +1,10 @@
+*.pyc
+__pycache__
+data/
+log/
+media/
+srdm.ini
+srdm.sock
+venv/
+.idea/
+SRDM/settings.py

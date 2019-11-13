@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+
+    <h2>{{ docente }}</h2>
+
+
+    <table class="table">
+
+        <tr>
+            <th>Carrera</th>
+            <th>Materia</th>
+            <th>Nivel</th>
+            <th>Período</th>
+            <th>Grupo</th>
+        </tr>
+
+
+        {% for materia in materias %}
+
+            <tr>
+
+            <td>{{ materia.materia.carrera }}</td>
+            <td><a href="{% url 'estudiantes_list' materia.pk %}">{{ materia.materia }}</a></td>
+            <td>{{ materia.materia.nivel }}</td>
+            <td>{{ materia.periodo }}</td>
+            <td> {{ materia.grupo }} </td>
+
+
+
+
+
+
+
+
+        {% endfor %}
+
+
+    </table>
+
+{% endblock %}
+
+

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h3>Documentos microcurriculares</h3>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th>Carrera</th>
+                <th>Materia</th>
+                <th>Grupo</th>
+                <th>Nivel</th>
+                <th>Período</th>
+                <th>Documentos</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for m in materias %}
+                <tr>
+                    <td>{{ m.materia.carrera.nombre }}</td>
+                    <td>{{ m.materia.nombre }}</td>
+                    <td>{{ m.grupo }}</td>
+                    <td>{{ m.materia.nivel }}</td>
+                    <td>{{ m.periodo }}</td>
+                    <td>
+                        {% for d in documentos %}
+                            {% if d.distributivo == m %}
+                                {% if d.esta_habilitado %}
+                                    <span> <a class="badge badge-primary"
+                                              href="{% url 'estudiante:documento' d.id %}">{{ d.documento.codigo }}</a></span>
+                                {% else %}
+                                    <span class="badge badge-secondary">{{ d.documento.codigo }}</span>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
