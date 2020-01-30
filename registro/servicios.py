@@ -36,6 +36,8 @@ from reportlab.lib.pagesizes import letter
 from django.core.files import File
 import os
 
+PARCIAL=2
+
 class Servicios(object):
     # Funcion que devuelve el nombre del usuario
     def getuser(self, usuario):
@@ -129,7 +131,7 @@ class Servicios(object):
     def sethash(self,materia,tipo):
         #modificado para parcial 2
         #i=Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo)
-        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo, parcial=1)
+        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo, parcial=PARCIAL)
         print("hashh",i)
         return i[0]
 
@@ -138,7 +140,7 @@ class Servicios(object):
         #i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo)
         #i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
         periodo=Periodo.objects.filter(activo=True).first()
-        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo,parcial=1).values()
+        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo,parcial=PARCIAL).values()
         if len(i)!=0:
 
             print(i.first()['estado'])
@@ -180,8 +182,9 @@ class Servicios(object):
         valid = "False"
         # documentos=Documento.objects.filter(informe__firma__alumno_id__in=alu)
         #documentos = Documento.objects.filter(informe__firma__alumno_id=alumno)
-        documentos = Documento.objects.filter(informe__firma__alumno_id=alumno,informe__parcial=1)
-        #modificado periodo 2
+        documentos = Documento.objects.filter(informe__firma__alumno_id=alumno,informe__parcial=PARCIAL)
+        #############################################################################################
+        #modificado parcial 2
         print(documentos)
         if len(documentos) != 0:
             for m in documentos:
@@ -287,9 +290,9 @@ class Servicios(object):
             fecha = servicios.getFecha()
 
             documentoid = str(
-                #modificado periodo 2    
+                #modificado periodo 2    ####################################################################################
                 #documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-1")
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))
             # print(documentoid)
             # print("Genero el PDF")
             response = HttpResponse(content_type='application/pdf')
@@ -327,7 +330,7 @@ class Servicios(object):
             documento = "ADM"
             fecha = servicios.getFecha()
             documentoid = str(
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))
             # documentoid = str(documento+"-"+str(codigo)+"-"+str(grupo)+"-"+str(periodo_numero)+"-"+ time.strftime("%Y-%m-%d %H:%M:%S"))
             # documentoid = str(documento + time.strftime("%Y-%m-%d %H:%M:%S"))
             # print(documentoid)
@@ -367,7 +370,7 @@ class Servicios(object):
             documento = "RN30"
             fecha = servicios.getFecha()
             documentoid = str(
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-1")    
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))    
                 #modificado periodo2
                 #documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
 

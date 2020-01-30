@@ -13,6 +13,7 @@ from registro.models import ValidarFirma
 from registro.forms import ValidarFirmaForm
 
 from ..models import Documento, Distributivo, Periodo
+PARCIAL=2
 
 servicios = Servicios()
 
@@ -89,7 +90,7 @@ def estudiantesList(request, distributivo_id):
         elemento = []
         # doc = servicios.getinforme(q.estudiante.cedula)
         #doc = Documento.objects.filter(informe__firma__alumno_id=q.pk)
-        doc = Documento.objects.filter(informe__parcial=1,informe__firma__alumno_id=q.pk)
+        doc = Documento.objects.filter(informe__parcial=PARCIAL,informe__firma__alumno_id=q.pk)
         print("**** DOC ***")
         print(q.pk)
         print(doc)
