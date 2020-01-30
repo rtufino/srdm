@@ -11,7 +11,7 @@ class Tarjeta(models.Model):
     url = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.codigo} {self.ubicacion}"
+        return self.codigo + " " +self.ubicacion
 
 
 class Horario(models.Model):
@@ -31,7 +31,7 @@ class Horario(models.Model):
     tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return f"{self.distributivo.materia} - {self.dia} {self.hora_inicio}"
+        return str(self.distributivo.materia) + " - " + str(self.dia) + " " + str(self.hora_inicio)
 
 
 class ReporteTutoria(models.Model):
@@ -57,4 +57,4 @@ class Firma(models.Model):
     observacion = models.CharField(max_length=128, blank=True)
 
     def __str__(self):
-        return self.alumno.estudiante.usuario.nombre()
+        return self.alumno
