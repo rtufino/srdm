@@ -139,8 +139,10 @@ class Firma(models.Model):
     def __str__(self):
         return self.alumno.estudiante.usuario.nombre()
 
+
 class ValidarFirma(models.Model):
-    documento_id=models.CharField(max_length=255,blank=True)
-    validacion=models.BooleanField(default=False)
+    documento_id = models.CharField(max_length=255, blank=True)
+    validacion = models.BooleanField(default=False)
+
     def __str__(self):
-        return self.validacion    
+        return self.validacion

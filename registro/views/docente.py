@@ -13,7 +13,8 @@ from registro.models import ValidarFirma
 from registro.forms import ValidarFirmaForm
 
 from ..models import Documento, Distributivo, Periodo
-PARCIAL=2
+
+PARCIAL = 2
 
 servicios = Servicios()
 
@@ -26,10 +27,10 @@ def home(request):
     nombre_docente = servicios.getuser(usuario)
 
     print("Docente:", nombre_docente)
-    #obtener el periodo activo
+    # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
-    materias = servicios.getmaterias(nombre_docente,periodo)
-    #materias = servicios.getmaterias(nombre_docente)
+    materias = servicios.getmaterias(nombre_docente, periodo)
+    # materias = servicios.getmaterias(nombre_docente)
     fecha_actual = servicios.getFechaActual()
     print("Fecha:", fecha_actual)
     if len(materias) != 0:
@@ -56,32 +57,31 @@ def home(request):
 @login_required
 @docente_required
 def estudiantesList(request, distributivo_id):
-
-    #obtener el periodo activo
+    # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
 
     # ************* MODIFICACIÓN POR RODIGO ******************
     # Se recibe el id del distributivo en lugar de la materia
 
     # ***************** Se consulta del Distributivo el nombre de la materia ************
-    materiaid = Distributivo.objects.filter(pk=distributivo_id,periodo_id=periodo)[0].materia.nombre
+    materiaid = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.nombre
 
     usuario = get_user(request)
 
     nombre_docente = servicios.getuser(usuario)
 
     fecha_actual = servicios.getFechaActual()
-    val = servicios.validar_materia_docente(distributivo_id,nombre_docente)
-    print("docente",val)
-    if val==False:
+    val = servicios.validar_materia_docente(distributivo_id, nombre_docente)
+    print("docente", val)
+    if val == False:
         mensaje = 'No tiene permiso para ver esta página'
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}
         print(dato)
         return render(request, 'registro/docente/error.html', dato)
-    #obtener el periodo activo
-    #periodo = Periodo.objects.filter(activo=True).first()
-    materias = servicios.getmaterias(nombre_docente,periodo)
+    # obtener el periodo activo
+    # periodo = Periodo.objects.filter(activo=True).first()
+    materias = servicios.getmaterias(nombre_docente, periodo)
     documento = []
     datos2 = []
     datos = []
@@ -89,8 +89,8 @@ def estudiantesList(request, distributivo_id):
     for q in (servicios.getalumnos(distributivo_id)):
         elemento = []
         # doc = servicios.getinforme(q.estudiante.cedula)
-        #doc = Documento.objects.filter(informe__firma__alumno_id=q.pk)
-        doc = Documento.objects.filter(informe__parcial=PARCIAL,informe__firma__alumno_id=q.pk)
+        # doc = Documento.objects.filter(informe__firma__alumno_id=q.pk)
+        doc = Documento.objects.filter(informe__parcial=PARCIAL, informe__firma__alumno_id=q.pk)
         print("**** DOC ***")
         print(q.pk)
         print(doc)
@@ -123,11 +123,11 @@ def estudiantesList(request, distributivo_id):
 @docente_required
 def documentos_pdf(request, materia, tipo):
     usuario = get_user(request)
-    print("recibo",materia)
+    print("recibo", materia)
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(materia, tipo)
-    print("estado",s)
-    if s!=None:
+    print("estado", s)
+    if s != None:
         if s['estado'] != "C":
             respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         else:
@@ -136,10 +136,10 @@ def documentos_pdf(request, materia, tipo):
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'registro/docente/error.html', dato)
     else:
-         mensaje = "El documento no es necesario para este período"
-         alerta = 'danger'
-         dato = {'mensaje': mensaje, 'alerta': alerta}
-         return render(request, 'registro/docente/error.html', dato)
+        mensaje = "El documento no es necesario para este período"
+        alerta = 'danger'
+        dato = {'mensaje': mensaje, 'alerta': alerta}
+        return render(request, 'registro/docente/error.html', dato)
 
     return respuesta
 

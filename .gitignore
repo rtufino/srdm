@@ -8,3 +8,4 @@ srdm.sock
 venv/
 .idea/
 SRDM/settings.py
+migrations/
