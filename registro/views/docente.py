@@ -142,6 +142,7 @@ def documentos_pdf(request, materia, tipo):
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'registro/docente/error.html', dato)
     else:
+        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no es necesario para este período"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}
