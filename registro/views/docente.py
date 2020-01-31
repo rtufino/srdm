@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 
 from ..decorators import docente_required
 from registro.servicios import Servicios
+from tutoria.servicios_t import Servicios_t
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -18,6 +19,7 @@ PARCIAL = 2
 
 servicios = Servicios()
 
+servicios_t=Servicios_t()
 
 @login_required
 @docente_required
@@ -96,6 +98,10 @@ def estudiantesList(request, distributivo_id):
         print(doc)
         nombre = q.estudiante
         cedula = q.estudiante.cedula
+        ################################################
+        tutorias=servicios_t.get_num_tutorias(cedula)
+        elemento.append(tutorias)
+        #################################################
 
         elemento.append(nombre)
         elemento.append(cedula)

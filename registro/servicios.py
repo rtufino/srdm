@@ -3,6 +3,9 @@ from registro.models import Estudiante, Alumno, Materia, Carrera, Docente, Distr
 from django.contrib.auth import get_user
 from reportlab.graphics.barcode import code128
 from reportlab.lib.units import mm
+#
+from tutoria.models import Firma
+#
 import time
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -220,6 +223,7 @@ class Servicios(object):
         drawing.add(qr_code)
 
         return drawing
+#
 
     def get_pdf(self, docente, distributivo_id, tipo):
         periodo = Periodo.objects.filter(activo=True).first()
