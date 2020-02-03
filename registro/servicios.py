@@ -135,7 +135,9 @@ class Servicios(object):
     def sethash(self,materia,tipo):
         #modificado para parcial 2
         #i=Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo)
+        print("######",tipo)
         i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo, parcial=PARCIAL)
+
         print("hashh",i)
         return i[0]
 
@@ -145,12 +147,14 @@ class Servicios(object):
         #i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
         periodo=Periodo.objects.filter(activo=True).first()
         i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo,parcial=PARCIAL).values()
+        print("tipo///",tipo)
+        print("////estado",i)
         if len(i)!=0:
 
             print(i.first()['estado'])
             return i.first()
         else:
-            print("resutado nulo")
+            print("resultado nulo")
             return None
 
 
@@ -287,6 +291,7 @@ class Servicios(object):
                                   fontName="Times-Bold"))
 
         if tipo == "REVEX":
+            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             print("----------revex--------------")
@@ -330,6 +335,7 @@ class Servicios(object):
 
         elif tipo == "ADM":
             print("---------------adm--------------")
+            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "ADM"
@@ -371,6 +377,7 @@ class Servicios(object):
 
         elif tipo == "RN30":
             print("-------------------rn30----------")
+            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "RN30"
@@ -415,6 +422,7 @@ class Servicios(object):
             # clientes.append(header3)
         elif tipo=="tutoria":
             print("tutoria")
+            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma', 'Inicio', 'Fin', 'Tema')
             ######################################################
             print("-------------------tutoria----------")
             allclientes = []
@@ -456,12 +464,20 @@ class Servicios(object):
 
                 # print(cedula)
                 valid = servicios.validardocumentos(q.pk, tipo)
+                #valid="True"
                 if valid == "True":
-                    allclientes = (q.estudiante, q.estudiante.cedula,
-                                   code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio,fin,observaciones)
-                    allclientes2.append(allclientes)
+                    for i in range(0,tutorias):
+                        print("*****i",inicio[i])
+                        print("****f",fin[i])
+                        print("***o",observaciones[i])
+                        allclientes = (q.estudiante, q.estudiante.cedula,
+                                   code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio[i],fin[i],observaciones[i])
 
-            print("***clientes***", allclientes2)
+
+                        allclientes2.append(allclientes)
+                #allclientes2.append(allclientes)
+                    #print("clientes",allclientes2)
+            #print("***clientes***", allclientes2)
 
             # clientes.append(header3)
             ################################################################
@@ -486,7 +502,7 @@ class Servicios(object):
         clientes.append(t1)
         clientes.append(header4)
 
-        headings = ('Nombre del Estudiante', 'No de cédula', 'Firma','Inicio','Fin','Tema')
+       # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma','Inicio','Fin','Tema')
 
         # *******************************************************************
 

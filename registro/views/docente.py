@@ -130,6 +130,7 @@ def estudiantesList(request, distributivo_id):
 def documentos_pdf(request, materia, tipo):
     usuario = get_user(request)
     print("recibo", materia)
+    print("recibo_tipo",tipo)
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(materia, tipo)
     print("estado", s)
