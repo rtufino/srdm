@@ -94,7 +94,7 @@ def firmar(request):
                     timestamp=datetime.datetime.now()
                 )
                 firma.save()
-                mensaje = 'Documento firmado exitosamentre'
+                mensaje = 'Documento firmado exitosamente'
                 alerta = 'success'
             else:
                 mensaje = 'Tu ya has firmado este documento'

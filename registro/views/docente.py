@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 
 from ..decorators import docente_required
 from registro.servicios import Servicios
+from tutoria.servicios_t import Servicios_t
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -18,6 +19,7 @@ PARCIAL = 2
 
 servicios = Servicios()
 
+servicios_t=Servicios_t()
 
 @login_required
 @docente_required
@@ -96,6 +98,10 @@ def estudiantesList(request, distributivo_id):
         print(doc)
         nombre = q.estudiante
         cedula = q.estudiante.cedula
+        ################################################
+        tutorias=servicios_t.get_num_tutorias(cedula)
+        elemento.append(tutorias)
+        #################################################
 
         elemento.append(nombre)
         elemento.append(cedula)
@@ -124,9 +130,11 @@ def estudiantesList(request, distributivo_id):
 def documentos_pdf(request, materia, tipo):
     usuario = get_user(request)
     print("recibo", materia)
+    print("recibo_tipo",tipo)
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(materia, tipo)
     print("estado", s)
+
     if s != None:
         if s['estado'] != "C":
             respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
@@ -136,6 +144,7 @@ def documentos_pdf(request, materia, tipo):
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'registro/docente/error.html', dato)
     else:
+        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no es necesario para este período"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}
