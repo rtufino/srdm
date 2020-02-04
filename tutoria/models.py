@@ -1,5 +1,5 @@
 from django.db import models
-from registro.models import Distributivo
+from registro.models import Distributivo, Docente, Estudiante
 
 
 # Create your models here.
@@ -7,31 +7,11 @@ from registro.models import Distributivo
 class Tarjeta(models.Model):
     codigo = models.CharField(max_length=7, null=False, unique=True)
     hash = models.CharField(max_length=512, null=True, blank=True)
-    ubicacion = models.CharField(max_length=128, null=False, blank=False)
+    docente = models.ForeignKey(Docente, on_delete=models.CASCADE, null=True)
     url = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return self.codigo + " " +self.ubicacion
-
-
-class Horario(models.Model):
-    DIA_SEMANA = [
-        (1, "LUNES"),
-        (2, "MARTES"),
-        (3, "MIERCOLES"),
-        (4, "JUEVES"),
-        (5, "VIERNES"),
-        (6, "SABADO"),
-        (7, "DOMINGO"),
-    ]
-    dia = models.IntegerField(choices=DIA_SEMANA, default=1)
-    hora_inicio = models.TimeField()
-    hora_fin = models.TimeField()
-    distributivo = models.ForeignKey(Distributivo, on_delete=models.CASCADE)
-    tarjeta = models.ForeignKey(Tarjeta, on_delete=models.CASCADE, null=True)
-
-    def __str__(self):
-        return str(self.distributivo.materia) + " - " + str(self.dia) + " " + str(self.hora_inicio)
+        return self.codigo + " " + self.docente.usuario.nombre()
 
 
 class ReporteTutoria(models.Model):
@@ -49,12 +29,12 @@ class ReporteTutoria(models.Model):
 
 
 class Firma(models.Model):
-    alumno = models.CharField(max_length=128, null=False, blank=False)
-    informe = models.ForeignKey(ReporteTutoria, on_delete=models.CASCADE)
+    reporte = models.ForeignKey(ReporteTutoria, on_delete=models.CASCADE)
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    hash = models.CharField(max_length=512)
     duracion = models.DurationField()
-    observacion = models.CharField(max_length=128, blank=True)
+    tema = models.CharField(max_length=32, blank=True)
+    hash = models.CharField(max_length=512)
 
     def __str__(self):
-        return self.alumno
+        return self.estudiante.usuario.nombre()

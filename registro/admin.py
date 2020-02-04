@@ -118,6 +118,7 @@ class FirmaAdmin(admin.ModelAdmin):
     list_display = 'alumno', 'informe', 'timestamp'
     list_filter = ['informe__distributivo__materia__carrera', 'informe__documento']
     search_fields = ['informe__distributivo__materia__nombre']
+    date_hierarchy = 'timestamp'
 
 
 class FirmaInLine(admin.TabularInline):
@@ -132,15 +133,14 @@ class InformeAdmin(admin.ModelAdmin):
     list_filter = ('distributivo__materia__carrera', 'parcial', 'documento')
     search_fields = ['distributivo__materia__nombre']
 
+    # class InformeAdmin(admin.ModelAdmin):
+    #    model = Informe
+    #    inlines = [FirmaInLine]
+    #    list_display = 'distributivo', 'documento', 'get_carrera', 'fecha_habilitacion', 'fecha_generacion', 'parcial', \
+    #                   'estado', 'get_periodo'
 
-#class InformeAdmin(admin.ModelAdmin):
-#    model = Informe
-#    inlines = [FirmaInLine]
-#    list_display = 'distributivo', 'documento', 'get_carrera', 'fecha_habilitacion', 'fecha_generacion', 'parcial', \
-#                   'estado', 'get_periodo'
-
-#    list_filter = (
-#        TitledFilter('periodo activo', 'distributivo__periodo__activo'), 'distributivo__materia__carrera', 'parcial')
+    #    list_filter = (
+    #        TitledFilter('periodo activo', 'distributivo__periodo__activo'), 'distributivo__materia__carrera', 'parcial')
 
     def get_carrera(self, obj: Informe):
         return obj.distributivo.materia.carrera.nombre
@@ -163,4 +163,4 @@ admin.site.register(Carrera, CarreraAdmin)
 admin.site.register(Distributivo, DistributivoAdmin)
 admin.site.register(TipoDocumento, TipoDocumentoAdmin)
 admin.site.register(Informe, InformeAdmin)
-admin.site.register(Firma,FirmaAdmin)
+admin.site.register(Firma, FirmaAdmin)
