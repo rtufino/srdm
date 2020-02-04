@@ -6,7 +6,7 @@ from reportlab.lib.units import mm
 #
 from tutoria.models import Firma
 #
-from tutoria.servicios_t import Servicios_t
+#from tutoria.servicios_t import Servicios_t
 import time
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -39,8 +39,8 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.lib.pagesizes import letter
 from django.core.files import File
 import os
-servicios_t=Servicios_t()
-PARCIAL=2
+#servicios_t=Servicios_t()
+PARCIAL=1
 
 class Servicios(object):
     # Funcion que devuelve el nombre del usuario
@@ -291,7 +291,7 @@ class Servicios(object):
                                   fontName="Times-Bold"))
 
         if tipo == "REVEX":
-            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+            #headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             print("----------revex--------------")
@@ -335,7 +335,7 @@ class Servicios(object):
 
         elif tipo == "ADM":
             print("---------------adm--------------")
-            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+            #headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "ADM"
@@ -377,7 +377,7 @@ class Servicios(object):
 
         elif tipo == "RN30":
             print("-------------------rn30----------")
-            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+           # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "RN30"
@@ -420,68 +420,68 @@ class Servicios(object):
             print("***clientes***", allclientes2)
 
             # clientes.append(header3)
-        elif tipo=="tutoria":
-            print("tutoria")
-            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma', 'Inicio', 'Fin', 'Tema','Día')
-            ######################################################
-            print("-------------------tutoria----------")
-            allclientes = []
-            allclientes2 = []
-            documento = "tutoria"
-            fecha = servicios.getFecha()
-            documentoid = str(
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(
-                    fecha) + "-" + str(PARCIAL))
-            # modificado periodo2
-            # documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
-
-            # print(documentoid)
-            # print("Genero el PDF")
-            response = HttpResponse(content_type='application/pdf')
-            pdf_name = documentoid  # llamado clientes
-            # la linea 26 es por si deseas descargar el pdf a tu computadora
-            response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
-            header = Paragraph("CARRERA " + nombre_carrera + " <br/>", styles['ejemplo'])
-            header2 = Paragraph("Registro de Tutorías. <br/>", styles['ejemplo'])
-            # header3=Paragraph("Por medio del presente documento, el docente y los estudiantes que firman la lista, certifican que revisarion las notas sobre 30 puntos <br/>", styles['ejemplo'])
-
-            header4 = Paragraph("<br/> <br/>", styles['ejemplo'])
-            clientes.append(header)
-            clientes.append(header2)
-            clientes.append(header4)
-
-            # alumnos = servicios.getalumnos(id_materia)
-            alumnos = servicios.getalumnos(distributivo_id)
-            # print(alumnos)
-
-            for q in alumnos:
-
-                cedula = q.estudiante.cedula
-                tutorias = servicios_t.get_num_tutorias(cedula)
-                observaciones=servicios_t.get_observacion(cedula)
-                inicio=servicios_t.get_inicio(cedula)
-                fin=servicios_t.get_fin(cedula)
-                dia=servicios_t.get_dia(cedula)
-                #print("********dia",dia)
-                # print(cedula)
-                valid = servicios.validardocumentos(q.pk, tipo)
-                #valid="True"
-                if valid == "True":
-                    for i in range(0,tutorias):
-                        #print("*****i",inicio[i])
-                        #print("****f",fin[i])
-                        #print("***o",observaciones[i])
-                        #print("***d",dia[i])
-                        allclientes = (q.estudiante, q.estudiante.cedula,
-                                   code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio[i],fin[i],observaciones[i],dia[i])
-
-
-                        allclientes2.append(allclientes)
-                #allclientes2.append(allclientes)
-                    #print("clientes",allclientes2)
-            #print("***clientes***", allclientes2)
-
-            # clientes.append(header3)
+        # elif tipo=="tutoria":
+        #     print("tutoria")
+        #     headings = ('Nombre del Estudiante', 'No de cédula', 'Firma', 'Inicio', 'Fin', 'Tema','Día')
+        #     ######################################################
+        #     print("-------------------tutoria----------")
+        #     allclientes = []
+        #     allclientes2 = []
+        #     documento = "tutoria"
+        #     fecha = servicios.getFecha()
+        #     documentoid = str(
+        #         documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(
+        #             fecha) + "-" + str(PARCIAL))
+        #     # modificado periodo2
+        #     # documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
+        #
+        #     # print(documentoid)
+        #     # print("Genero el PDF")
+        #     response = HttpResponse(content_type='application/pdf')
+        #     pdf_name = documentoid  # llamado clientes
+        #     # la linea 26 es por si deseas descargar el pdf a tu computadora
+        #     response['Content-Disposition'] = 'inline; filename=%s' % pdf_name
+        #     header = Paragraph("CARRERA " + nombre_carrera + " <br/>", styles['ejemplo'])
+        #     header2 = Paragraph("Registro de Tutorías. <br/>", styles['ejemplo'])
+        #     # header3=Paragraph("Por medio del presente documento, el docente y los estudiantes que firman la lista, certifican que revisarion las notas sobre 30 puntos <br/>", styles['ejemplo'])
+        #
+        #     header4 = Paragraph("<br/> <br/>", styles['ejemplo'])
+        #     clientes.append(header)
+        #     clientes.append(header2)
+        #     clientes.append(header4)
+        #
+        #     # alumnos = servicios.getalumnos(id_materia)
+        #     alumnos = servicios.getalumnos(distributivo_id)
+        #     # print(alumnos)
+        #
+        #     for q in alumnos:
+        #
+        #         cedula = q.estudiante.cedula
+        #         tutorias = servicios_t.get_num_tutorias(cedula)
+        #         observaciones=servicios_t.get_observacion(cedula)
+        #         inicio=servicios_t.get_inicio(cedula)
+        #         fin=servicios_t.get_fin(cedula)
+        #         dia=servicios_t.get_dia(cedula)
+        #         #print("********dia",dia)
+        #         # print(cedula)
+        #         valid = servicios.validardocumentos(q.pk, tipo)
+        #         #valid="True"
+        #         if valid == "True":
+        #             for i in range(0,tutorias):
+        #                 #print("*****i",inicio[i])
+        #                 #print("****f",fin[i])
+        #                 #print("***o",observaciones[i])
+        #                 #print("***d",dia[i])
+        #                 allclientes = (q.estudiante, q.estudiante.cedula,
+        #                            code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio[i],fin[i],observaciones[i],dia[i])
+        #
+        #
+        #                 allclientes2.append(allclientes)
+        #         #allclientes2.append(allclientes)
+        #             #print("clientes",allclientes2)
+        #     #print("***clientes***", allclientes2)
+        #
+        #     # clientes.append(header3)
             ################################################################
 
         headings2 = ('', '')
@@ -504,7 +504,7 @@ class Servicios(object):
         clientes.append(t1)
         clientes.append(header4)
 
-       # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma','Inicio','Fin','Tema')
+        headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
 
         # *******************************************************************
 
@@ -513,7 +513,7 @@ class Servicios(object):
         t = Table([headings] + allclientes2,repeatRows=0)
         t.setStyle(TableStyle(
             [
-                ('GRID', (0, 0), (6, -1), 1, colors.black),
+                ('GRID', (0, 0), (3, -1), 1, colors.black),
                 ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
                 ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
             ]
