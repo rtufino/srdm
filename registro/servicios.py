@@ -269,7 +269,7 @@ class Servicios(object):
         doc1 = SimpleDocTemplate(buff1,
                                  pagesize=A4,
                                  rightMargin=15,
-                                 leftMargin=25,
+                                 leftMargin=15,
                                  topMargin=25,
                                  bottomMargin=30,
                                  )
@@ -422,7 +422,7 @@ class Servicios(object):
             # clientes.append(header3)
         elif tipo=="tutoria":
             print("tutoria")
-            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma', 'Inicio', 'Fin', 'Tema')
+            headings = ('Nombre del Estudiante', 'No de cédula', 'Firma', 'Inicio', 'Fin', 'Tema','Día')
             ######################################################
             print("-------------------tutoria----------")
             allclientes = []
@@ -461,17 +461,19 @@ class Servicios(object):
                 observaciones=servicios_t.get_observacion(cedula)
                 inicio=servicios_t.get_inicio(cedula)
                 fin=servicios_t.get_fin(cedula)
-
+                dia=servicios_t.get_dia(cedula)
+                #print("********dia",dia)
                 # print(cedula)
                 valid = servicios.validardocumentos(q.pk, tipo)
                 #valid="True"
                 if valid == "True":
                     for i in range(0,tutorias):
-                        print("*****i",inicio[i])
-                        print("****f",fin[i])
-                        print("***o",observaciones[i])
+                        #print("*****i",inicio[i])
+                        #print("****f",fin[i])
+                        #print("***o",observaciones[i])
+                        #print("***d",dia[i])
                         allclientes = (q.estudiante, q.estudiante.cedula,
-                                   code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio[i],fin[i],observaciones[i])
+                                   code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1),inicio[i],fin[i],observaciones[i],dia[i])
 
 
                         allclientes2.append(allclientes)
@@ -511,7 +513,7 @@ class Servicios(object):
         t = Table([headings] + allclientes2,repeatRows=0)
         t.setStyle(TableStyle(
             [
-                ('GRID', (0, 0), (3, -1), 1, colors.black),
+                ('GRID', (0, 0), (6, -1), 1, colors.black),
                 ('LINEBELOW', (0, 0), (-1, 0), 2, colors.black),
                 ('BACKGROUND', (0, 0), (-1, 0), colors.transparent)
             ]

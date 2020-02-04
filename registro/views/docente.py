@@ -134,6 +134,7 @@ def documentos_pdf(request, materia, tipo):
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(materia, tipo)
     print("estado", s)
+
     if s != None:
         if s['estado'] != "C":
             respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
