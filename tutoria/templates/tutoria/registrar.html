@@ -1,0 +1,67 @@
+{% extends 'tutoria/base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{% url 'tutoria_estudiante:firmar' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <p class="lead">Docente:</p>
+                        <p class="lead font-weight-bold">{{ docente }}</p>
+                    </div>
+                    <div class="form-group">
+                        <p>Período:</p>
+                        <p>{{ periodo.descripcion }} ({{ periodo.numero }})</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputCedula">Cédula del estudiante:</label>
+                        <input type="number" class="form-control" name="inputCedula" id="inputCedula" aria-describedby="cedulaHelp"
+                               required>
+                        <small id="cedulaHelp" class="form-text text-muted">Ingresa tu número de cédula sin espacios ni
+                            guiones</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAsignatura">Asignatura:</label>
+                        <select class="form-control" id="inputAsignatura" name="inputAsignatura">
+                            {% for item in asignaturas %}
+                            <option value="{{ item.id }}">{{ item.materia.nombre }} - G{{ item.grupo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputTema">Tema:</label>
+                        <input type="text" class="form-control" name="inputTema" id="inputTema" aria-describedby="temaHelp"
+                               maxlength="32" required>
+                        <small id="temaHelp" class="form-text text-muted">Ingresa el tema revisado (32
+                            caracteres)</small>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="inputTema">Inicio:</label>
+                                <input type="time" class="form-control" id="inputInicio" name="inputInicio"  value="{{ inicio }}" required>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="inputTema">Finalización:</label>
+                                <input type="time" class="form-control" id="inputFin" name="inputFin" value="{{ fin }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.readyState
+</script>
+
+{% endblock %}

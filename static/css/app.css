@@ -5,3 +5,13 @@ footer {
 footer a {
   color: #212529;
 }
+
+footer {
+    /*background-color: #353A3F;
+    color: white;
+    /* width: 100%;
+    position: fixed;*/
+    bottom: 0px;
+    text-align: center;
+    padding: 10px;
+}

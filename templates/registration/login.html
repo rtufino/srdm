@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}Registro Documentos Microcurriculares{% endblock %}</title>
+    <title>{% block title %}Papeles{% endblock %}</title>
     <link rel="icon" href="{% static 'img/favicon.png' %}">
 
     <style>
@@ -44,7 +44,7 @@
     </div>
 {% endif %}
 <form class="form-signin" method="post" novalidate>
-    <h1 class="h3 mb-3 font-weight-normal">RDM</h1>
+    <h1 class="h3 mb-3 font-weight-normal">PAPELES</h1>
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}">
     {% if next %}
@@ -57,11 +57,6 @@
     <label for="inputPassword" class="sr-only">Contraseña</label>
     <input type="password" class="form-control" id="inputPassword" name="password" placeholder="Password">
     <button type="submit" class="btn btn-lg btn-primary btn-block">Login</button>
-    <p class="mt-5 mb-3 text-muted">
-        <a href="https://rodrigotufino.info">© Rodrigo Tufiño</a>
-        /
-        <a href="https://julioproano.info">© Julio Proaño</a>
-    </p>
 </form>
 
 </body>
