@@ -3,20 +3,20 @@ from tutoria.models import Firma #, Horario
 
 class Servicios_t(object):
 
-    def get_num_tutorias(self, estudiante):
+    def get_num_tutorias(self, estudiante,parcial):
         # funcion recibe estudiante y devuelve el número de tutorias tomadas
-        num_tutorias = Firma.objects.filter(estudiante_id=estudiante).count()
+        num_tutorias = Firma.objects.filter(estudiante_id=estudiante,reporte__parcial=parcial).count()
         print("numero tutorias:", num_tutorias)
         return num_tutorias
 
-    def get_observacion(self, estudiante):
-        observacion = Firma.objects.filter(estudiante=estudiante).values_list('tema', flat=True)
+    def get_observacion(self, estudiante,parcial):
+        observacion = Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('tema', flat=True)
 
         print("temas:", observacion)
         return observacion
 
-    def get_inicio(self, estudiante):
-        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
+    def get_inicio(self, estudiante,parcial):
+        informe_id = Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('id', flat=True)
         print(informe_id)
         hora_inicio = []
         # for i in informe_id:
@@ -30,8 +30,8 @@ class Servicios_t(object):
         # print("hora inicio",hora_aux)
         return hora_inicio
 
-    def get_fin(self, estudiante):
-        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
+    def get_fin(self, estudiante,parcial):
+        informe_id = Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('id', flat=True)
         print(informe_id)
         hora_fin = []
         # for i in informe_id:
@@ -45,8 +45,8 @@ class Servicios_t(object):
         # print("hora inicio",hora_aux)
         return hora_fin
 
-    def get_dia(self, estudiante):
-        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
+    def get_dia(self, estudiante,parcial):
+        informe_id = Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('id', flat=True)
         print(informe_id)
         dia_aux = []
         # for i in informe_id:
@@ -61,10 +61,10 @@ class Servicios_t(object):
 
         return
 
-    def get_timestamp(self,estudiante):
-        time_stamp=Firma.objects.filter(estudiante=estudiante).values_list('timestamp',flat=True)
+    def get_timestamp(self,estudiante,parcial):
+        time_stamp=Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('timestamp',flat=True)
         return time_stamp
 
-    def get_duracion(self,estudiante):
-        duracion=Firma.objects.filter(estudiante=estudiante).values_list('duracion',flat=True)
+    def get_duracion(self,estudiante,parcial):
+        duracion=Firma.objects.filter(estudiante=estudiante,reporte__parcial=parcial).values_list('duracion',flat=True)
         return duracion

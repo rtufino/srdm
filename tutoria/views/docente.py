@@ -95,11 +95,11 @@ def estudiantesList(request, distributivo_id):
 
 
 
-        tutorias = servicios_t.get_num_tutorias(q.estudiante_id)
+        tutorias = servicios_t.get_num_tutorias(q.estudiante_id,PARCIAL)
 
-        temas=servicios_t.get_observacion(q.estudiante_id)
-        timestamp=servicios_t.get_timestamp(q.estudiante_id)
-        duracion=servicios_t.get_duracion(q.estudiante_id)
+        temas=servicios_t.get_observacion(q.estudiante_id,PARCIAL)
+        timestamp=servicios_t.get_timestamp(q.estudiante_id,PARCIAL)
+        duracion=servicios_t.get_duracion(q.estudiante_id,PARCIAL)
         for i in temas:
             elemento.append(i)
         for i in timestamp:
