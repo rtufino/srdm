@@ -135,7 +135,8 @@ def estudiantesList(request, distributivo_id):
 
     context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente, "informacion": informacion, }
     print(context2)
-
+    nombre_docente=nombre_docente.usuario.nombre()
+    servicios_t.get_data(distributivo_id)
 
     return render(request, 'tutoria/docente/estudiantes_list.html',context2)
 
