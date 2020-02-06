@@ -6,7 +6,13 @@ urlpatterns = [
     path('', registro.home, name='home'),
 
     path('docente/', include((
-        [path('', docente.home, name='home_docente'), ], 'classroom'),
+        [path('', docente.home, name='home_docente'),
+
+        path('<distributivo_id>/', docente.estudiantesList, name='estudiantes_list'),
+        path('revex/<materia> <tipo>/', docente.documentos_pdf, name='documentos_pdf'),
+        path('validar/', docente.validarfirma, name='validarfirma'),
+
+         ], 'classroom'),
         namespace='docente')),
 
     path('estudiante/', include((
@@ -17,8 +23,5 @@ urlpatterns = [
         ], 'classroom1'),
         namespace='estudiante')),
 
-    path('docente/<distributivo_id>/', docente.estudiantesList, name='estudiantes_list'),
-    path('revex/<materia> <tipo>/', docente.documentos_pdf, name='documentos_pdf'),
-    path('validar/', docente.validarfirma, name='validarfirma'),
 
 ]

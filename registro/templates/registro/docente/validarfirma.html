@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form action="{% url 'validarfirma' %}" method="post">
+  <form action="{% url 'docente:validarfirma' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
 

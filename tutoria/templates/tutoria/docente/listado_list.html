@@ -24,7 +24,7 @@
             <tr>
 
             <td>{{ materia.materia.carrera }}</td>
-            <td><a href="{% url 'docente:estudiantes_list' materia.pk %}">{{ materia.materia }}</a></td>
+            <td><a href="{% url 'tutoria:estudiantes_list' materia.pk %}">{{ materia.materia }}</a></td>
             <td>{{ materia.materia.nivel }}</td>
             <td>{{ materia.periodo }}</td>
             <td> {{ materia.grupo }} </td>
@@ -42,5 +42,4 @@
     </table>
 
 {% endblock %}
-
 

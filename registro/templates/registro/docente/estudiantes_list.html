@@ -7,7 +7,7 @@
 
     <table class="table">
         <tr>
-            <th>Tutorías</th>
+
             <th>Nombre del estudiante</th>
             <th>Número de cédula</th>
             <th>Documento</th>
@@ -37,9 +37,9 @@
 
     <h2>Generar Reportes</h2>
 
-    <a href="{% url 'documentos_pdf' materia 'ADM' %}" class="btn btn-success"> ADM</a>
-    <a href="{% url 'documentos_pdf' materia 'REVEX' %}" class="btn btn-success"> REVEX</a>
-    <a href="{% url 'documentos_pdf' materia 'RN30' %}" class="btn btn-success"> RN30</a>
+    <a href="{% url 'docente:documentos_pdf' materia 'ADM' %}" class="btn btn-success"> ADM</a>
+    <a href="{% url 'docente:documentos_pdf' materia 'REVEX' %}" class="btn btn-success"> REVEX</a>
+    <a href="{% url 'docente:documentos_pdf' materia 'RN30' %}" class="btn btn-success"> RN30</a>
 
 
 {% endblock %}

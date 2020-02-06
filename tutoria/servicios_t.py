@@ -5,17 +5,18 @@ class Servicios_t(object):
 
     def get_num_tutorias(self, estudiante):
         # funcion recibe estudiante y devuelve el número de tutorias tomadas
-        num_tutorias = Firma.objects.filter(alumno=estudiante).count()
-        print("numero tutoias:", num_tutorias)
+        num_tutorias = Firma.objects.filter(estudiante_id=estudiante).count()
+        print("numero tutorias:", num_tutorias)
         return num_tutorias
 
     def get_observacion(self, estudiante):
-        observacion = Firma.objects.filter(alumno=estudiante).values_list('observacion', flat=True)
+        observacion = Firma.objects.filter(estudiante=estudiante).values_list('tema', flat=True)
+
         print("temas:", observacion)
         return observacion
 
     def get_inicio(self, estudiante):
-        informe_id = Firma.objects.filter(alumno=estudiante).values_list('id', flat=True)
+        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
         print(informe_id)
         hora_inicio = []
         # for i in informe_id:
@@ -30,7 +31,7 @@ class Servicios_t(object):
         return hora_inicio
 
     def get_fin(self, estudiante):
-        informe_id = Firma.objects.filter(alumno=estudiante).values_list('id', flat=True)
+        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
         print(informe_id)
         hora_fin = []
         # for i in informe_id:
@@ -45,7 +46,7 @@ class Servicios_t(object):
         return hora_fin
 
     def get_dia(self, estudiante):
-        informe_id = Firma.objects.filter(alumno=estudiante).values_list('id', flat=True)
+        informe_id = Firma.objects.filter(estudiante=estudiante).values_list('id', flat=True)
         print(informe_id)
         dia_aux = []
         # for i in informe_id:
@@ -56,3 +57,14 @@ class Servicios_t(object):
         #     # print("hora inicio:", inicio)
         print("hora inicio", dia_aux)
         return dia_aux
+    def cabecera(self,estudiante):
+
+        return
+
+    def get_timestamp(self,estudiante):
+        time_stamp=Firma.objects.filter(estudiante=estudiante).values_list('timestamp',flat=True)
+        return time_stamp
+
+    def get_duracion(self,estudiante):
+        duracion=Firma.objects.filter(estudiante=estudiante).values_list('duracion',flat=True)
+        return duracion
