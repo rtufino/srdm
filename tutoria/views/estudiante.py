@@ -70,15 +70,6 @@ def firmar(request):
                 'boton': True
             }
             return render(request, 'tutoria/error.html', dato)
-        # validar estudiante
-        # if estudiante is None:
-        #     dato = {
-        #         'tipo': 'danger',
-        #         'mensaje': 'No existe un estudiante con la cédula proporcionada.',
-        #         'enfasis': cedula,
-        #         'boton': True
-        #     }
-        #     return render(request, 'tutoria/error.html', dato)
         # Validar reporte
         if reporte is None:
             dato = {
@@ -103,21 +94,40 @@ def firmar(request):
         firma.save()
         # Redireccionar
         base_url = reverse('tutoria_estudiante:confirmar')
-        query_string = urlencode(
-            {
-                'id': firma.pk
-            }
-        )
+        query_string = urlencode({'id': firma.pk})
         url = '{}?{}'.format(base_url, query_string)
         return redirect(url)
 
 
+@login_required
+@estudiante_required
 def confirmar(request):
     # Obtener datos de la peticion
     id = request.GET['id']
     # Obtener objeto
     firma = Firma.objects.filter(pk=id).first()
-
+    # Obtener estudiante
+    user = get_user(request)
+    estudiante = Estudiante.objects.filter(usuario=user).first()
+    # Validar firma
+    if firma is None:
+        dato = {
+            'tipo': 'danger',
+            'mensaje': 'No existe el registro de tutoría con id ' + id,
+            'enfasis': 'Probablemente esto es un error generado por ti',
+            'boton': False
+        }
+        return render(request, 'tutoria/error.html', dato)
+    # Validar estudiante es dueño de la firma
+    if estudiante != firma.estudiante:
+        dato = {
+            'tipo': 'warning',
+            'mensaje': 'Estás intentando ver un registro de tutoría que no te pertenece.',
+            'enfasis': 'No seas sapo',
+            'boton': False
+        }
+        return render(request, 'tutoria/error.html', dato)
+    # Generar datos para renderizar la página
     datos = {
         'estudiante': firma.estudiante.usuario.nombre(),
         'asignatura': firma.reporte.distributivo.materia.nombre,
