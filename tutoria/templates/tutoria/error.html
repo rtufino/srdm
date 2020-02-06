@@ -1,0 +1,23 @@
+{% extends 'tutoria/base.html' %}
+
+{% block content %}
+
+
+
+<div class="row">
+    <div class="col-md">
+        <div class="alert alert-{{ tipo }}" role="alert">
+            {{ mensaje }}<br><b>{{ enfasis }}</b>.
+        </div>
+    </div>
+</div>
+{%  if boton %}
+<div class="row">
+    <div class="col-md">
+        <button class="btn btn-warning" onclick="history.back()">Regresar</button>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

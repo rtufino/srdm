@@ -1,0 +1,47 @@
+{% extends 'tutoria/base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="alert alert-success" role="alert">
+            ¡ Tu tutoría ha sido registrada exitosamente !
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <p>Docente:</p>
+                    <p>{{ docente }}</p>
+                </div>
+                <div class="form-group">
+                    <p>Estudiante:</p>
+                    <p>{{ estudiante}}</p>
+                </div>
+                <div class="form-group">
+                    <p>Asignatura:</p>
+                    <p>{{ asignatura }}</p>
+                </div>
+                <div class="form-group">
+                    <p>Tema:</p>
+                    <p>{{ tema }}</p>
+                </div>
+                <div class="form-group">
+                    <p>Duración:</p>
+                    <p>{{ duracion }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" style="padding-top: 10px">
+    <div class="col-md-6">
+        <a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Salir</a>
+    </div>
+</div>
+
+{% endblock %}
