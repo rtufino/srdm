@@ -126,7 +126,9 @@ def estudiantesList(request, distributivo_id):
         #print("informacion_aux",informacion_aux)
 
         informacion.append(informacion_aux)
-
+        elemento_aux = []
+        fechas_aux = []
+        duracion_aux = []
     print("informacion",informacion)
     #print(datos)
 
