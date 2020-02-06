@@ -16,19 +16,16 @@
 <body class="bg-light">
 <div class="container">
 
-
-
-    {% if user.is_authenticated %}
-        <p class="pt-3">Autenticado como <strong>{{ user.first_name }}</strong>. <a href="{% url 'logout' %}">Salir</a>.
-        </p>
-    {% endif %}
-
+    <div class="row" style="padding-top: 15px">
+        <div class="col-sm">
+            <h1 class="display-5">Tutoría</h1>
+            <p class="lead">Registro de tutorías académicas</p>
+        </div>
+    </div>
 
     {% block content %}
 
     {% endblock %}
-
-    <br/>
     <footer>
         © UPS 2020<br>
         Carrera en Ciencias de la Computación<br>
@@ -39,5 +36,7 @@
         </div>
     </footer>
 </div>
+
+
 </body>
 </html>

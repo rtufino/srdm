@@ -1,0 +1,39 @@
+{% extends 'tutoria/base.html' %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="alert alert-success" role="alert">
+            Tu tutoría ha sido registrada exitósamente
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <p>Estudiante:</p>
+                    <p class="lead">{{ estudiante}}</p>
+                </div>
+                <div class="form-group">
+                    <p>Asignatura:</p>
+                    <p>{{ asignatura }}</p>
+                </div>
+                <div class="form-group">
+                    <p>Tema:</p>
+                    <p>{{ tema }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.readyState
+</script>
+
+{% endblock %}
