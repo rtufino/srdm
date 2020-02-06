@@ -131,7 +131,7 @@ def estudiantesList(request, distributivo_id):
     #print(datos)
 
 
-    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente, "alumnos": datos, }
+    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente, "informacion": informacion, }
     print(context2)
 
 

@@ -15,16 +15,13 @@
 
     <tr>
 
-        {% for m in alumnos %}
+        {% for m in informacion %}
+             <td>{{ m.cedula }}</td>
+            <td>{{ m.nombre }}</td>
+            <td>{{ m.num_tutorias }}</td>
 
 
-        {% for e in m %}
 
-
-            <td>{{ e.cedula }}</td>
-            <td>{{ e }}</td>
-
-        {% endfor %}
 
 
     </tr>
