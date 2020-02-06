@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="alert alert-success" role="alert">
-            Tu tutoría ha sido registrada exitósamente
+            ¡ Tu tutoría ha sido registrada exitosamente !
         </div>
     </div>
 </div>
@@ -15,8 +15,12 @@
         <div class="card">
             <div class="card-body">
                 <div class="form-group">
+                    <p>Docente:</p>
+                    <p>{{ docente }}</p>
+                </div>
+                <div class="form-group">
                     <p>Estudiante:</p>
-                    <p class="lead">{{ estudiante}}</p>
+                    <p>{{ estudiante}}</p>
                 </div>
                 <div class="form-group">
                     <p>Asignatura:</p>
@@ -26,14 +30,18 @@
                     <p>Tema:</p>
                     <p>{{ tema }}</p>
                 </div>
+                <div class="form-group">
+                    <p>Duración:</p>
+                    <p>{{ duracion }}</p>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-
-<script>
-    document.readyState
-</script>
+<div class="row" style="padding-top: 10px">
+    <div class="col-md-6">
+        <a href="{% url 'logout' %}" class="btn btn-secondary btn-block">Salir</a>
+    </div>
+</div>
 
 {% endblock %}

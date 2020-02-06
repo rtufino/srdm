@@ -2,13 +2,17 @@ import datetime
 from urllib.parse import urlencode
 
 from django.shortcuts import redirect, render
-from django.utils import text
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.contrib.auth import get_user
 
 from registro.models import Distributivo, Periodo, Estudiante
 from tutoria.models import Tarjeta, ReporteTutoria, Firma
+from registro.decorators import estudiante_required
 
 
+@login_required
+@estudiante_required
 def registrar(request, codigo_hash):
     # Obtener la tarjeta a partir del codigo hash
     tarjeta = Tarjeta.objects.filter(hash=codigo_hash).first()
@@ -21,6 +25,9 @@ def registrar(request, codigo_hash):
             'enfasis': codigo_hash
         }
         return render(request, 'tutoria/error.html', dato)
+    # Obtener estudiante
+    user = get_user(request)
+    estudiante = Estudiante.objects.filter(usuario=user).first()
     # Obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
     # Obtener distributivos
@@ -33,22 +40,26 @@ def registrar(request, codigo_hash):
         'asignaturas': distributivos,
         'periodo': periodo,
         'inicio': inicio,
-        'fin': fin
+        'fin': fin,
+        'estudiante': estudiante.usuario.nombre()
     }
     return render(request, 'tutoria/registrar.html', datos)
 
 
+@login_required
+@estudiante_required
 def firmar(request):
     if request.method == 'POST':
         # Obtener datos
-        cedula = request.POST.get('inputCedula')
         id_distributivo = request.POST.get('inputAsignatura')
         tema = request.POST.get('inputTema')
         inicio = request.POST.get('inputInicio')
         fin = request.POST.get('inputFin')
+        # Obtener estudiante
+        user = get_user(request)
+        estudiante = Estudiante.objects.filter(usuario=user).first()
         # Obtener objetos
         distributivo = Distributivo.objects.filter(pk=id_distributivo).first()
-        estudiante = Estudiante.objects.filter(cedula=cedula).first()
         reporte = ReporteTutoria.objects.filter(distributivo=distributivo).first()
         # validar distributivo
         if distributivo is None:
@@ -60,14 +71,14 @@ def firmar(request):
             }
             return render(request, 'tutoria/error.html', dato)
         # validar estudiante
-        if estudiante is None:
-            dato = {
-                'tipo': 'danger',
-                'mensaje': 'No existe un estudiante con la cédula proporcionada.',
-                'enfasis': cedula,
-                'boton': True
-            }
-            return render(request, 'tutoria/error.html', dato)
+        # if estudiante is None:
+        #     dato = {
+        #         'tipo': 'danger',
+        #         'mensaje': 'No existe un estudiante con la cédula proporcionada.',
+        #         'enfasis': cedula,
+        #         'boton': True
+        #     }
+        #     return render(request, 'tutoria/error.html', dato)
         # Validar reporte
         if reporte is None:
             dato = {
@@ -94,27 +105,24 @@ def firmar(request):
         base_url = reverse('tutoria_estudiante:confirmar')
         query_string = urlencode(
             {
-                'e': estudiante.pk,
-                'd': id_distributivo,
-                't': tema
+                'id': firma.pk
             }
         )
         url = '{}?{}'.format(base_url, query_string)
-        print(base_url, query_string, url)
         return redirect(url)
 
 
 def confirmar(request):
     # Obtener datos de la peticion
-    id_e = request.GET['e']
-    id_d = request.GET['d']
-    tema = request.GET['t']
-    # Obtener objetos
-    estudiante = Estudiante.objects.filter(pk=id_e).first()
-    distributivo = Distributivo.objects.filter(pk=id_d).first()
+    id = request.GET['id']
+    # Obtener objeto
+    firma = Firma.objects.filter(pk=id).first()
+
     datos = {
-        'estudiante': estudiante.usuario.nombre(),
-        'asignatura': distributivo.materia.nombre,
-        'tema': tema
+        'estudiante': firma.estudiante.usuario.nombre(),
+        'asignatura': firma.reporte.distributivo.materia.nombre,
+        'docente': firma.reporte.distributivo.docente.usuario.nombre(),
+        'duracion': firma.duracion,
+        'tema': firma.tema
     }
     return render(request, 'tutoria/confirmar.html', datos)
