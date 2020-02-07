@@ -95,9 +95,14 @@ class Servicios_t(object):
 
 
     def get_timestamp(self,estudiante,parcial,periodo,distributivo_id):
-        time_stamp=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('timestamp',flat=True)
+        #time_stamp=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('timestamp',flat=True)
+        time_stamp = Firma.objects.filter(reporte__distributivo_id=distributivo_id, estudiante=estudiante,
+                                      reporte__parcial=parcial, reporte__distributivo__periodo=periodo)
+        lista=[]
+        for i in time_stamp:
+            lista.append(i.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
         #fecha = str(time_stamp.strftime("%Y-%m-%d %H:%M:%S"))
-        return time_stamp
+        return lista
 
     def get_duracion(self,estudiante,parcial,periodo,distributivo_id):
         duracion=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('duracion',flat=True)
