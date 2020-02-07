@@ -212,6 +212,7 @@ class Servicios_t(object):
                 'temas': elemento_aux,
                 'fecha': fechas_aux,
                 'duracion': duracion,
+                'id': q.estudiante.pk
             }
             # print("informacion_aux",informacion_aux)
 

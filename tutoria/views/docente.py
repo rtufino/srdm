@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from registro.decorators import docente_required
-from registro.models import Distributivo, Periodo
+from registro.models import Distributivo, Periodo, Estudiante
 from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
