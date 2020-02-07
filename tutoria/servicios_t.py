@@ -223,6 +223,22 @@ class Servicios_t(object):
         print("informacion", informacion)
         return informacion
 
+    def verificar_estado_informe(self, materia, tipo):
+        print(materia)
+        #i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo)
+        #i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
+        periodo=Periodo.objects.filter(activo=True).first()
+        i = ReporteTutoria.objects.filter(distributivo_id=materia,parcial=PARCIAL).values()
+        print("tipo///",tipo)
+        print("////estado",i)
+        if len(i)!=0:
+
+            print(i.first()['estado'])
+            return i.first()
+        else:
+            print("resultado nulo")
+            return None
+
     def gen_reporte(self, datos, tipo, distributivo):
         allclientes2=[]
         print("llega_distributivo",distributivo)

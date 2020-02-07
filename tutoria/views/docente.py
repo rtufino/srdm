@@ -128,15 +128,15 @@ def documentos_pdf(request, distributivo_id, tipo):
     print("recibo", distributivo_id)
     print("recibo_tipo",tipo)
     nombre_docente = servicios.getuser(usuario)
-    s = servicios.verificar_estado_informe(distributivo_id, tipo)
+    s = servicios_t.verificar_estado_informe(distributivo_id, tipo)
     print("estado", s)
 
     if s != None:
         if s['estado'] != "C":
             informacion=servicios_t.get_info(distributivo_id)
             #servicios_t.get_data(distributivo_id)
-            servicios_t.gen_reporte(informacion, tipo, distributivo_id)
-            respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
+            respuesta=servicios_t.gen_reporte(informacion, tipo, distributivo_id)
+            #respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
         else:
             mensaje = "El documento ya se ha generado"
             alerta = 'danger'
