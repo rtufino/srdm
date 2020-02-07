@@ -7,7 +7,7 @@ urlpatterns = [
         [
             path('', docente.home, name='home_docente'),
             path('<distributivo_id>/', docente.estudiantesList, name='estudiantes_list'),
-            #  path('<distributivo_id>/<cedula>/', docente.detalletutoria, name='detalle_tutoria'),
+            path('detalle/<int:distributivo_id>/<int:estudiante_id>/', docente.detalle_tutoria, name='detalle_tutoria'),
         ], 'classrom3'),
         namespace='tutoria')),
     path('estudiante/', include((

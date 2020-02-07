@@ -3,15 +3,17 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from registro.decorators import docente_required
-from registro.models import Distributivo, Periodo
+from registro.models import Distributivo, Periodo, Estudiante
 from registro.servicios import Servicios
-from tutoria.models import Firma
+from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from collections import defaultdict
+
 PARCIAL = 1
 
-servicios=Servicios()
+servicios = Servicios()
 servicios_t = Servicios_t()
+
 
 @login_required
 @docente_required
@@ -47,12 +49,12 @@ def home(request):
 
     return render(request, 'tutoria/docente/listado_list.html', context)
 
+
 @login_required
 @docente_required
 def estudiantesList(request, distributivo_id):
-    informacion=[]
-    informacion_aux={}
-
+    informacion = []
+    informacion_aux = {}
 
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -79,8 +81,8 @@ def estudiantesList(request, distributivo_id):
 
     datos = []
     elemento_aux = []
-    fechas_aux=[]
-    duracion_aux=[]
+    fechas_aux = []
+    duracion_aux = []
     # ************** se obtiene los alumnos por el id de distributivo ************
     for q in (servicios.getalumnos(distributivo_id)):
         elemento = []
@@ -92,14 +94,11 @@ def estudiantesList(request, distributivo_id):
 
         elemento.append(nombre)
 
-
-
-
         tutorias = servicios_t.get_num_tutorias(q.estudiante_id)
 
-        temas=servicios_t.get_observacion(q.estudiante_id)
-        timestamp=servicios_t.get_timestamp(q.estudiante_id)
-        duracion=servicios_t.get_duracion(q.estudiante_id)
+        temas = servicios_t.get_observacion(q.estudiante_id)
+        timestamp = servicios_t.get_timestamp(q.estudiante_id)
+        duracion = servicios_t.get_duracion(q.estudiante_id)
         for i in temas:
             elemento.append(i)
         for i in timestamp:
@@ -108,41 +107,66 @@ def estudiantesList(request, distributivo_id):
         for i in duracion:
             duracion_aux.append(i)
 
-
         elemento.append(tutorias)
         datos.append(elemento)
         for i in temas:
             elemento_aux.append(i)
-        print("elemento_aux",elemento_aux)
+        print("elemento_aux", elemento_aux)
 
-        informacion_aux={
-            'nombre':q.estudiante,
-            'cedula':q.estudiante.cedula,
-            'num_tutorias':tutorias,
-            'temas':elemento_aux,
-            'fecha':fechas_aux,
-            'duracion':duracion,
+        informacion_aux = {
+            'nombre': q.estudiante,
+            'cedula': q.estudiante.cedula,
+            'num_tutorias': tutorias,
+            'temas': elemento_aux,
+            'fecha': fechas_aux,
+            'duracion': duracion,
+            'id': q.estudiante.pk
         }
-        #print("informacion_aux",informacion_aux)
+        # print("informacion_aux",informacion_aux)
 
         informacion.append(informacion_aux)
 
-    print("informacion",informacion)
-    #print(datos)
+    print("informacion", informacion)
+    # print(datos)
 
-
-    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente, "informacion": informacion, }
+    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente,
+                "informacion": informacion, }
     print(context2)
 
+    return render(request, 'tutoria/docente/estudiantes_list.html', context2)
 
-    return render(request, 'tutoria/docente/estudiantes_list.html',context2)
 
-def detalletutoria(request,distributivo_id,cedula):
-    estudiante=cedula.pk
+# def detalletutoria(request, distributivo_id, cedula):
+#     estudiante = cedula.pk
+#
+#     print(estudiante)
+#
+#     context = {"alumnos": estudiante}
+#     print(context)
+#     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
 
-    print(estudiante)
 
-    context = {"alumnos": estudiante}
-    print(context)
+def detalle_tutoria(request, distributivo_id, estudiante_id):
+    # Obtener estudiante
+    estudiante = Estudiante.objects.filter(pk=estudiante_id).first()
+    # Obtner tutorias
+    distributivo = Distributivo.objects.filter(pk=distributivo_id).first()
+    reporte = ReporteTutoria.objects.filter(distributivo=distributivo).first()
+    firmas = Firma.objects.filter(reporte=reporte).filter(estudiante=estudiante)
+    # retornar las firmas
+    data = []
+    n = 1
+    for f in firmas:
+        d = {
+            'numero': n,
+            'fecha': f.timestamp,
+            'duracion': f.duracion,
+            'tema': f.tema
+        }
+        data.append(d)
+        n += 1
+    context = {
+        'alumno': estudiante.usuario.nombre(),
+        'tutorias': data
+    }
     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
-

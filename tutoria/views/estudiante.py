@@ -24,7 +24,7 @@ def registrar(request, codigo_hash):
             'boton': False,
             'enfasis': codigo_hash
         }
-        return render(request, 'tutoria/error.html', dato)
+        return render(request, 'tutoria/estudiante/error.html', dato)
     # Obtener estudiante
     user = get_user(request)
     estudiante = Estudiante.objects.filter(usuario=user).first()
@@ -34,16 +34,19 @@ def registrar(request, codigo_hash):
     distributivos = Distributivo.objects.filter(periodo=periodo).filter(docente=tarjeta.docente)
     # Obtiene la hora actual
     fin = datetime.datetime.now().strftime("%H:%M")
+    # Establece 15 minutos atrás de la hora actual
     inicio = (datetime.datetime.now() - datetime.timedelta(minutes=15)).strftime("%H:%M")
+    # Armar datos para la página
     datos = {
         'docente': tarjeta.docente.usuario.nombre(),
         'asignaturas': distributivos,
         'periodo': periodo,
         'inicio': inicio,
         'fin': fin,
-        'estudiante': estudiante.usuario.nombre()
+        'estudiante': estudiante.usuario.nombre(),
+        'page_title': 'Registrar Tutoria'
     }
-    return render(request, 'tutoria/registrar.html', datos)
+    return render(request, 'tutoria/estudiante/registrar.html', datos)
 
 
 @login_required
@@ -69,7 +72,7 @@ def firmar(request):
                 'enfasis': 'id = ' + id_distributivo,
                 'boton': True
             }
-            return render(request, 'tutoria/error.html', dato)
+            return render(request, 'tutoria/estudiante/error.html', dato)
         # Validar reporte
         if reporte is None:
             dato = {
@@ -78,7 +81,7 @@ def firmar(request):
                 'enfasis': 'Notifique a los desarrolladores',
                 'boton': True
             }
-            return render(request, 'tutoria/error.html', dato)
+            return render(request, 'tutoria/estudiante/error.html', dato)
         # Calculando duracion
         t_inicio = datetime.datetime.strptime(inicio, '%H:%M')
         t_fin = datetime.datetime.strptime(fin, '%H:%M')
@@ -117,7 +120,7 @@ def confirmar(request):
             'enfasis': 'Probablemente esto es un error generado por ti',
             'boton': False
         }
-        return render(request, 'tutoria/error.html', dato)
+        return render(request, 'tutoria/estudiante/error.html', dato)
     # Validar estudiante es dueño de la firma
     if estudiante != firma.estudiante:
         dato = {
@@ -126,7 +129,7 @@ def confirmar(request):
             'enfasis': 'No seas sapo',
             'boton': False
         }
-        return render(request, 'tutoria/error.html', dato)
+        return render(request, 'tutoria/estudiante/error.html', dato)
     # Generar datos para renderizar la página
     datos = {
         'estudiante': firma.estudiante.usuario.nombre(),
@@ -135,4 +138,4 @@ def confirmar(request):
         'duracion': firma.duracion,
         'tema': firma.tema
     }
-    return render(request, 'tutoria/confirmar.html', datos)
+    return render(request, 'tutoria/estudiante/confirmar.html', datos)

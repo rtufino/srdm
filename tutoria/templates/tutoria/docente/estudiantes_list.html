@@ -2,7 +2,6 @@
 
 {% block content %}
 
-<h1> {{ materia.pk }}</h1>
 <h2>Estudiantes</h2>
 
 <table class="table">
@@ -10,28 +9,23 @@
         <th>Número de cédula</th>
         <th>Nombre del estudiante</th>
         <th>Número de tutorías</th>
-
     <tr>
 
     <tr>
-
         {% for m in informacion %}
-             <td>{{ m.cedula }}</td>
-            <td>{{ m.nombre }}</td>
+        <td>{{ m.cedula }}</td>
+        <td>{{ m.nombre }}</td>
+        {% if m.num_tutorias > 0 %}
+            <td><a href="{%  url 'tutoria:detalle_tutoria' materia m.id %}">{{ m.num_tutorias }}</a></td>
+        {% else %}
             <td>{{ m.num_tutorias }}</td>
-
-
-
-
+        {% endif %}
 
     </tr>
 
-
     {% endfor %}
 
-
 </table>
-
 
 <h2>Generar Reportes</h2>
 

@@ -1,14 +1,30 @@
 {% extends "base.html" %}
 
 
-
 {% block content %}
 
+<h2>{{ alumno }}</h2>
 
-    <h2>{{ alumnos }}</h2>
-
-
-
+<table class="table">
+    <thead>
+    <tr>
+        <td>Número</td>
+        <td>Fecha</td>
+        <td>Tema</td>
+        <td>Duración</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for t in tutorias %}
+    <tr>
+        <td>{{ t.numero }}</td>
+        <td>{{ t.fecha }}</td>
+        <td>{{ t.tema }}</td>
+        <td>{{ t.duracion }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
 
 {% endblock %}
