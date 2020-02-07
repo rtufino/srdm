@@ -4,7 +4,7 @@ from django.contrib.auth import get_user
 from reportlab.graphics.barcode import code128
 from reportlab.lib.units import mm
 #
-from tutoria.models import Firma
+from tutoria.models import Firma, ReporteTutoria
 #
 #from tutoria.servicios_t import Servicios_t
 import time
@@ -214,7 +214,20 @@ class Servicios(object):
     def validarfirma(self, hash_id):
 
         hash_doc = Informe.objects.filter(hash=hash_id).values("hash").exists()
-        return hash_doc
+
+        if hash_doc==True:
+
+            return hash_doc
+        elif hash_doc==False:
+            hash_doc = ReporteTutoria.objects.filter(hash=hash_id).values("hash").exists()
+            if hash_doc==True:
+
+                return hash_doc
+            else:
+                hash_doc=None
+
+
+
 
     def createqr(self, enlace):
 

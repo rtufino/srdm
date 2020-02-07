@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from registro.decorators import docente_required
+from registro.forms import ValidarFirmaForm
 from registro.models import Distributivo, Periodo, Estudiante
 from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
@@ -150,3 +151,34 @@ def documentos_pdf(request, distributivo_id, tipo):
         return render(request, 'tutoria/docente/error.html', dato)
 
     return respuesta
+
+def validarfirma(request):
+    dato = {}
+    if request.method == 'POST':
+        form = ValidarFirmaForm(request.POST)
+        if form.is_valid():
+
+            firma_hash = form.save()
+
+            firma_hash.save()
+            print(form.cleaned_data['documento_id'])
+            valid = servicios.validarfirma(form.cleaned_data['documento_id'])
+            print(valid)
+            if valid == True:
+
+                mensaje = 'Documento Válido'
+                alerta = 'success'
+                dato = {'mensaje': mensaje, 'alerta': alerta}
+                print(dato)
+                return render(request, 'registro/docente/confirmacion.html', dato)
+            else:
+                mensaje = "No existe Documento"
+                alerta = 'danger'
+                dato = {'mensaje': mensaje, 'alerta': alerta}
+                return render(request, 'registro/docente/confirmacion.html', dato)
+
+
+    else:
+        form = ValidarFirmaForm()
+
+    return render(request, 'registro/docente/validarfirma.html', {'form': form})
