@@ -3,17 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from registro.decorators import docente_required
-from registro.models import Distributivo, Periodo, Estudiante
+from registro.models import Distributivo, Periodo
 from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from collections import defaultdict
-
 PARCIAL = 1
 
 servicios = Servicios()
 servicios_t = Servicios_t()
-
 
 @login_required
 @docente_required
@@ -49,12 +47,12 @@ def home(request):
 
     return render(request, 'tutoria/docente/listado_list.html', context)
 
-
 @login_required
 @docente_required
 def estudiantesList(request, distributivo_id):
-    informacion = []
+
     informacion_aux = {}
+
 
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -79,71 +77,24 @@ def estudiantesList(request, distributivo_id):
         print(dato)
         return render(request, 'tutoria/docente/error.html', dato)
 
-    datos = []
-    elemento_aux = []
-    fechas_aux = []
-    duracion_aux = []
-    # ************** se obtiene los alumnos por el id de distributivo ************
-    for q in (servicios.getalumnos(distributivo_id)):
-        elemento = []
+    informacion=servicios_t.get_info(distributivo_id)
+#######################################################################################
 
-        print(q.estudiante_id)
-
-        nombre = q.estudiante
-        cedula = q.estudiante.cedula
-
-        elemento.append(nombre)
-
-        tutorias = servicios_t.get_num_tutorias(q.estudiante_id)
-
-        temas = servicios_t.get_observacion(q.estudiante_id)
-        timestamp = servicios_t.get_timestamp(q.estudiante_id)
-        duracion = servicios_t.get_duracion(q.estudiante_id)
-        for i in temas:
-            elemento.append(i)
-        for i in timestamp:
-            fechas_aux.append(i)
-
-        for i in duracion:
-            duracion_aux.append(i)
-
-        elemento.append(tutorias)
-        datos.append(elemento)
-        for i in temas:
-            elemento_aux.append(i)
-        print("elemento_aux", elemento_aux)
-
-        informacion_aux = {
-            'nombre': q.estudiante,
-            'cedula': q.estudiante.cedula,
-            'num_tutorias': tutorias,
-            'temas': elemento_aux,
-            'fecha': fechas_aux,
-            'duracion': duracion,
-            'id': q.estudiante.pk
-        }
-        # print("informacion_aux",informacion_aux)
-
-        informacion.append(informacion_aux)
-
-    print("informacion", informacion)
     # print(datos)
-
+#######################################################################################
     context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente,
                 "informacion": informacion, }
     print(context2)
+    nombre_docente = nombre_docente.usuario.nombre()
+
+    ########pruebas unicamenes###########################################
+    #servicios_t.get_data(distributivo_id)
+    #servicios_t.gen_reporte(informacion, 'tutoria', distributivo_id)
+    #####################################################################
 
     return render(request, 'tutoria/docente/estudiantes_list.html', context2)
 
 
-# def detalletutoria(request, distributivo_id, cedula):
-#     estudiante = cedula.pk
-#
-#     print(estudiante)
-#
-#     context = {"alumnos": estudiante}
-#     print(context)
-#     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
 
 
 def detalle_tutoria(request, distributivo_id, estudiante_id):
@@ -170,3 +121,32 @@ def detalle_tutoria(request, distributivo_id, estudiante_id):
         'tutorias': data
     }
     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
+@login_required
+@docente_required
+def documentos_pdf(request, distributivo_id, tipo):
+    usuario = get_user(request)
+    print("recibo", distributivo_id)
+    print("recibo_tipo",tipo)
+    nombre_docente = servicios.getuser(usuario)
+    s = servicios.verificar_estado_informe(distributivo_id, tipo)
+    print("estado", s)
+
+    if s != None:
+        if s['estado'] != "C":
+            informacion=servicios_t.get_info(distributivo_id)
+            #servicios_t.get_data(distributivo_id)
+            servicios_t.gen_reporte(informacion, tipo, distributivo_id)
+            respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
+        else:
+            mensaje = "El documento ya se ha generado"
+            alerta = 'danger'
+            dato = {'mensaje': mensaje, 'alerta': alerta}
+            return render(request, 'tutoria/docente/error.html', dato)
+    else:
+        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
+        mensaje = "El documento no se puede generar, no hay tutorias registradas"
+        alerta = 'danger'
+        dato = {'mensaje': mensaje, 'alerta': alerta}
+        return render(request, 'tutoria/docente/error.html', dato)
+
+    return respuesta
