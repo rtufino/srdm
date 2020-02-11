@@ -7,4 +7,4 @@ def home(request):
             return redirect('docente:home_docente')
         elif request.user.es_estudiante:
             return redirect('estudiante:home')
-    return render(request, 'registro/home.html')
+    return render(request, 'index.html')

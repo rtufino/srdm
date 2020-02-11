@@ -8,18 +8,18 @@ from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from collections import defaultdict
+
 PARCIAL = 1
 
 servicios = Servicios()
 servicios_t = Servicios_t()
 
+
 @login_required
 @docente_required
 def home(request):
     usuario = get_user(request)
-
     nombre_docente = servicios.getuser(usuario)
-
     print("Docente:", nombre_docente)
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -47,12 +47,11 @@ def home(request):
 
     return render(request, 'tutoria/docente/listado_list.html', context)
 
+
 @login_required
 @docente_required
 def estudiantesList(request, distributivo_id):
-
     informacion_aux = {}
-
 
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -61,7 +60,8 @@ def estudiantesList(request, distributivo_id):
     # Se recibe el id del distributivo en lugar de la materia
 
     # ***************** Se consulta del Distributivo el nombre de la materia ************
-    materiaid = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.nombre
+    la_materia = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo).first()
+    asignatura = la_materia.materia.nombre + " - G" + la_materia.grupo
 
     usuario = get_user(request)
 
@@ -77,24 +77,27 @@ def estudiantesList(request, distributivo_id):
         print(dato)
         return render(request, 'tutoria/docente/error.html', dato)
 
-    informacion=servicios_t.get_info(distributivo_id)
-#######################################################################################
+    informacion = servicios_t.get_info(distributivo_id)
+    #######################################################################################
 
     # print(datos)
-#######################################################################################
-    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente,
-                "informacion": informacion, }
+    #######################################################################################
+    context2 = {
+        "fecha": fecha_actual,
+        "materia": distributivo_id,
+        "docente": nombre_docente,
+        "informacion": informacion,
+        "asignatura": asignatura
+    }
     print(context2)
     nombre_docente = nombre_docente.usuario.nombre()
 
     ########pruebas unicamenes###########################################
-    #servicios_t.get_data(distributivo_id)
-    #servicios_t.gen_reporte(informacion, 'tutoria', distributivo_id)
+    # servicios_t.get_data(distributivo_id)
+    # servicios_t.gen_reporte(informacion, 'tutoria', distributivo_id)
     #####################################################################
 
     return render(request, 'tutoria/docente/estudiantes_list.html', context2)
-
-
 
 
 def detalle_tutoria(request, distributivo_id, estudiante_id):
@@ -112,29 +115,33 @@ def detalle_tutoria(request, distributivo_id, estudiante_id):
             'numero': n,
             'fecha': f.timestamp,
             'duracion': f.duracion,
-            'tema': f.tema
+            'tema': f.tema,
         }
         data.append(d)
         n += 1
     context = {
         'alumno': estudiante.usuario.nombre(),
-        'tutorias': data
+        'tutorias': data,
+        'asignatura': distributivo.materia.nombre + " - G" + distributivo.grupo,
+        'distributivo_id': distributivo_id
     }
     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
+
+
 @login_required
 @docente_required
 def documentos_pdf(request, distributivo_id, tipo):
     usuario = get_user(request)
     print("recibo", distributivo_id)
-    print("recibo_tipo",tipo)
+    print("recibo_tipo", tipo)
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(distributivo_id, tipo)
     print("estado", s)
 
     if s != None:
         if s['estado'] != "C":
-            informacion=servicios_t.get_info(distributivo_id)
-            #servicios_t.get_data(distributivo_id)
+            informacion = servicios_t.get_info(distributivo_id)
+            # servicios_t.get_data(distributivo_id)
             servicios_t.gen_reporte(informacion, tipo, distributivo_id)
             respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
         else:
@@ -143,7 +150,7 @@ def documentos_pdf(request, distributivo_id, tipo):
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'tutoria/docente/error.html', dato)
     else:
-        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
+        # respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no se puede generar, no hay tutorias registradas"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}

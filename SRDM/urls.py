@@ -18,9 +18,11 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from SRDM import dashboard
 
 urlpatterns = [
-    path('', include('registro.urls')),
+    path('', dashboard.home, name='home'),
+    path('registro/', include('registro.urls')),
     path('tutoria/', include('tutoria.urls')),
     path('autenticacion/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),

@@ -1,46 +1,59 @@
-{% extends "base.html" %}
+{% extends "dashboard/base.html" %}
 
 {% block content %}
 
-    <h1> {{ materia.pk }}</h1>
-    <h2>Estudiantes</h2>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Documentos Microcurriculares</h1>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'registro_docente:home' %}">Documentos</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ asignatura }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
 
-    <table class="table">
-        <tr>
-
-            <th>Nombre del estudiante</th>
-            <th>Número de cédula</th>
-            <th>Documento</th>
-        <tr>
-
-        <tr>
-
-            {% for m in alumnos %}
-
-                {% for e in m %}
+<div class="row">
+    <div class="col-sm">
+        <div class="table-responsive">
+            <table class="table table table-hover table-sm">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Cédula</th>
+                    <th>Documentos</th>
+                <tr>
+                </thead>
+                <tbody>
+                {% for m in alumnos %}
+                <tr>
+                    {% for e in m %}
                     <td>{{ e }}</td>
-                {% endfor %}
-
-
-
-
-
-
+                    {% endfor %}
                 </tr>
-
-
-            {% endfor %}
-
-
-    </table>
-
-
-    <h2>Generar Reportes</h2>
-
-    <a href="{% url 'docente:documentos_pdf' materia 'ADM' %}" class="btn btn-success"> ADM</a>
-    <a href="{% url 'docente:documentos_pdf' materia 'REVEX' %}" class="btn btn-success"> REVEX</a>
-    <a href="{% url 'docente:documentos_pdf' materia 'RN30' %}" class="btn btn-success"> RN30</a>
-
-
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'registro_docente:documentos_pdf' materia 'ADM' %}" target="_blank" class="btn btn-success">
+                ADM</a>
+            <a href="{% url 'registro_docente:documentos_pdf' materia 'REVEX' %}" target="_blank"
+               class="btn btn-success">
+                REVEX</a>
+            <a href="{% url 'registro_docente:documentos_pdf' materia 'RN30' %}" target="_blank"
+               class="btn btn-success">
+                RN30</a>
+        </div>
+        <a href="{% url 'registro_docente:home' %}" class="btn btn-secondary">Regresar</a>
+    </div>
+</div>
 {% endblock %}
 

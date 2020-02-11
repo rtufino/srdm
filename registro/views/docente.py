@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 
 from ..decorators import docente_required
 from registro.servicios import Servicios
-#from tutoria.servicios_t import Servicios_t
+# from tutoria.servicios_t import Servicios_t
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -19,15 +19,14 @@ PARCIAL = 1
 
 servicios = Servicios()
 
-#servicios_t=Servicios_t()
+
+# servicios_t=Servicios_t()
 
 @login_required
 @docente_required
 def home(request):
     usuario = get_user(request)
-
     nombre_docente = servicios.getuser(usuario)
-
     print("Docente:", nombre_docente)
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -66,7 +65,8 @@ def estudiantesList(request, distributivo_id):
     # Se recibe el id del distributivo en lugar de la materia
 
     # ***************** Se consulta del Distributivo el nombre de la materia ************
-    materiaid = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.nombre
+    la_materia = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo).first()
+    asignatura = la_materia.materia.nombre + " - G" + la_materia.grupo
 
     usuario = get_user(request)
 
@@ -99,8 +99,8 @@ def estudiantesList(request, distributivo_id):
         nombre = q.estudiante
         cedula = q.estudiante.cedula
         ################################################
-        #tutorias=servicios_t.get_num_tutorias(cedula)
-        #elemento.append(tutorias)
+        # tutorias=servicios_t.get_num_tutorias(cedula)
+        # elemento.append(tutorias)
         #################################################
 
         elemento.append(nombre)
@@ -120,7 +120,13 @@ def estudiantesList(request, distributivo_id):
 
     # context2 = {"fecha": fecha_actual, "materia": materiaid, "docente": nombre_docente,
     #             "alumnos": servicios.getalumnos(materiaid), "document": datos[2], "cedula": q.estudiante.cedula}
-    context2 = {"fecha": fecha_actual, "materia": distributivo_id, "docente": nombre_docente, "alumnos": datos, }
+    context2 = {
+        "fecha": fecha_actual,
+        "materia": distributivo_id,
+        "docente": nombre_docente,
+        "alumnos": datos,
+        "asignatura": asignatura
+    }
     print(context2)
     return render(request, 'registro/docente/estudiantes_list.html', context2)
 
@@ -130,7 +136,7 @@ def estudiantesList(request, distributivo_id):
 def documentos_pdf(request, materia, tipo):
     usuario = get_user(request)
     print("recibo", materia)
-    print("recibo_tipo",tipo)
+    print("recibo_tipo", tipo)
     nombre_docente = servicios.getuser(usuario)
     s = servicios.verificar_estado_informe(materia, tipo)
     print("estado", s)
@@ -144,7 +150,7 @@ def documentos_pdf(request, materia, tipo):
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'registro/docente/error.html', dato)
     else:
-        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
+        # respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no es necesario para este período"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}

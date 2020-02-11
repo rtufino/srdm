@@ -1,0 +1,39 @@
+{% load static %}
+
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Papeles{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    {# CSS Bootstrap #}
+    {% bootstrap_css %}
+
+</head>
+<body>
+
+<div class="container">
+    <p>&nbsp;</p>
+    <div class="jumbotron">
+        <h1 class="display-4">Papeles</h1>
+        <p class="lead">Sistema de control y registro para documentos académicos.</p>
+        <hr class="my-4">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg" role="button">Autenticar</a>
+    </div>
+</div>
+
+<footer style="text-align: center">
+    © UPS 2020<br>
+    Carrera en Ciencias de la Computación<br>
+    <div class="text-muted">
+        Desarrollado por
+        <a class="text-muted" href="http://julioproano.info" target="_blank">Julio Proaño</a> y
+        <a class="text-muted" href="http://rodrigotufino.info" target="_blank">Rodrigo Tufiño</a>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,38 +1,65 @@
-{% extends "base.html" %}
+{% extends "dashboard/base.html" %}
 
 {% block content %}
 
-<h2>Estudiantes</h2>
-
-<table class="table">
-    <tr>
-        <th>Número de cédula</th>
-        <th>Nombre del estudiante</th>
-        <th>Número de tutorías</th>
-    <tr>
-
-    <tr>
-        {% for m in informacion %}
-        <td>{{ m.cedula }}</td>
-        <td>{{ m.nombre }}</td>
-        {% if m.num_tutorias > 0 %}
-            <td><a href="{%  url 'tutoria:detalle_tutoria' materia m.id %}">{{ m.num_tutorias }}</a></td>
-        {% else %}
-            <td>{{ m.num_tutorias }}</td>
-        {% endif %}
-
-    </tr>
-
-    {% endfor %}
-
-</table>
-
-<h2>Generar Reportes</h2>
-
-
-
-<a href="{% url 'tutoria:documentos_pdf' materia 'tutoria' %}" class="btn btn-success"> TUTORÍAS</a>
-
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Registro de Tutorías</h1>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'tutoria_docente:home' %}">Tutorías</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ asignatura }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <table class="table table table-hover table-sm">
+            <thead class="thead-dark">
+            <tr>
+                <th>Estudiante</th>
+                <th>Cédula</th>
+                <th>Tutorías</th>
+            <tr>
+            </thead>
+            <tbody>
+            {% for m in informacion %}
+            <tr>
+                <td>
+                    {% if m.num_tutorias > 0 %}
+                    <a href="{%  url 'tutoria_docente:detalle_tutoria' materia m.id %}">{{ m.nombre }}</a>
+                    {% else %}
+                    {{ m.nombre }}
+                    {% endif %}
+                </td>
+                <td>{{ m.cedula }}</td>
+                <td>
+                    {% if m.num_tutorias > 0 %}
+                    <span class="badge badge-info">{{ m.num_tutorias }}</span>
+                    {% else %}
+                    <span class="badge badge-secondary">{{ m.num_tutorias }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{% url 'tutoria_docente:documentos_pdf' materia 'tutoria' %}" target="_blank"
+               class="btn btn-success">
+                Descargar
+            </a>
+        </div>
+        <a href="{% url 'tutoria_docente:home' %}" class="btn btn-secondary">Regresar</a>
+    </div>
+</div>
 
 {% endblock %}
 

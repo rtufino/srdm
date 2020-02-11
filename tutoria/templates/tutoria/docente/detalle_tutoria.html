@@ -1,30 +1,53 @@
-{% extends "base.html" %}
+{% extends "dashboard/base.html" %}
 
 
 {% block content %}
 
-<h2>{{ alumno }}</h2>
-
-<table class="table">
-    <thead>
-    <tr>
-        <td>Número</td>
-        <td>Fecha</td>
-        <td>Tema</td>
-        <td>Duración</td>
-    </tr>
-    </thead>
-    <tbody>
-    {% for t in tutorias %}
-    <tr>
-        <td>{{ t.numero }}</td>
-        <td>{{ t.fecha }}</td>
-        <td>{{ t.tema }}</td>
-        <td>{{ t.duracion }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+     xmlns="http://www.w3.org/1999/html">
+    <h1 class="h2">Registro de Tutorías</h1>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'tutoria_docente:home' %}">Tutorías</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'tutoria_docente:estudiantes_list' distributivo_id %}">
+                    {{ asignatura }}
+                </a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ alumno }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <table class="table table table-hover table-sm">
+            <thead class="thead-dark">
+            <tr>
+                <th>Número</th>
+                <th>Fecha</th>
+                <th>Tema</th>
+                <th>Duración</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for t in tutorias %}
+            <tr>
+                <td>{{ t.numero }}</td>
+                <td>{{ t.fecha }}</td>
+                <td>{{ t.tema }}</td>
+                <td>{{ t.duracion }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <button onclick="window.history.back();" class="btn btn-secondary">Regresar</button>
+    </div>
+</div>
 
 {% endblock %}

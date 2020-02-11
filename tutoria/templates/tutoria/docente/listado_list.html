@@ -1,45 +1,41 @@
-{% extends "base.html" %}
-
+{% extends "dashboard/base.html" %}
 
 
 {% block content %}
 
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Registro de Tutorías</h1>
+</div>
 
-    <h2>{{ docente }}</h2>
-
-
-    <table class="table">
-
-        <tr>
-            <th>Carrera</th>
-            <th>Materia</th>
-            <th>Nivel</th>
-            <th>Período</th>
-            <th>Grupo</th>
-        </tr>
-
-
-        {% for materia in materias %}
-
-            <tr>
-
-            <td>{{ materia.materia.carrera }}</td>
-            <td><a href="{% url 'tutoria:estudiantes_list' materia.pk %}">{{ materia.materia }}</a></td>
-            <td>{{ materia.materia.nivel }}</td>
-            <td>{{ materia.periodo }}</td>
-            <td> {{ materia.grupo }} </td>
-
-
-
-
-
-
-
-
-        {% endfor %}
-
-
-    </table>
-
+<div class="row">
+    <div class="col-sm">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Carrera</th>
+                    <th>Materia</th>
+                    <th>Nivel</th>
+                    <th>Grupo</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for materia in materias %}
+                <tr>
+                    <td>{{ materia.materia.carrera }}</td>
+                    <td><a href="{% url 'tutoria_docente:estudiantes_list' materia.pk %}">{{ materia.materia }}</a></td>
+                    <td>{{ materia.materia.nivel }}</td>
+                    <td> {{ materia.grupo }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <a href="{%  url 'home' %}" class="btn btn-primary">Dashboard</a>
+    </div>
+</div>
 {% endblock %}
-
