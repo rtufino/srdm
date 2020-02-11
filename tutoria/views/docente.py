@@ -3,23 +3,24 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from registro.decorators import docente_required
+from registro.forms import ValidarFirmaForm
 from registro.models import Distributivo, Periodo, Estudiante
 from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from collections import defaultdict
-
 PARCIAL = 1
 
 servicios = Servicios()
 servicios_t = Servicios_t()
 
-
 @login_required
 @docente_required
 def home(request):
     usuario = get_user(request)
+
     nombre_docente = servicios.getuser(usuario)
+
     print("Docente:", nombre_docente)
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -47,11 +48,12 @@ def home(request):
 
     return render(request, 'tutoria/docente/listado_list.html', context)
 
-
 @login_required
 @docente_required
 def estudiantesList(request, distributivo_id):
+
     informacion_aux = {}
+
 
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
@@ -77,8 +79,8 @@ def estudiantesList(request, distributivo_id):
         print(dato)
         return render(request, 'tutoria/docente/error.html', dato)
 
-    informacion = servicios_t.get_info(distributivo_id)
-    #######################################################################################
+    informacion=servicios_t.get_info(distributivo_id)
+#######################################################################################
 
     # print(datos)
     #######################################################################################
@@ -93,11 +95,13 @@ def estudiantesList(request, distributivo_id):
     nombre_docente = nombre_docente.usuario.nombre()
 
     ########pruebas unicamenes###########################################
-    # servicios_t.get_data(distributivo_id)
-    # servicios_t.gen_reporte(informacion, 'tutoria', distributivo_id)
+    #servicios_t.get_data(distributivo_id)
+    #servicios_t.gen_reporte(informacion, 'tutoria', distributivo_id)
     #####################################################################
 
     return render(request, 'tutoria/docente/estudiantes_list.html', context2)
+
+
 
 
 def detalle_tutoria(request, distributivo_id, estudiante_id):
@@ -115,7 +119,7 @@ def detalle_tutoria(request, distributivo_id, estudiante_id):
             'numero': n,
             'fecha': f.timestamp,
             'duracion': f.duracion,
-            'tema': f.tema,
+            'tema': f.tema
         }
         data.append(d)
         n += 1
@@ -126,34 +130,63 @@ def detalle_tutoria(request, distributivo_id, estudiante_id):
         'distributivo_id': distributivo_id
     }
     return render(request, 'tutoria/docente/detalle_tutoria.html', context)
-
-
 @login_required
 @docente_required
 def documentos_pdf(request, distributivo_id, tipo):
     usuario = get_user(request)
     print("recibo", distributivo_id)
-    print("recibo_tipo", tipo)
+    print("recibo_tipo",tipo)
     nombre_docente = servicios.getuser(usuario)
-    s = servicios.verificar_estado_informe(distributivo_id, tipo)
+    s = servicios_t.verificar_estado_informe(distributivo_id, tipo)
     print("estado", s)
 
     if s != None:
         if s['estado'] != "C":
-            informacion = servicios_t.get_info(distributivo_id)
-            # servicios_t.get_data(distributivo_id)
-            servicios_t.gen_reporte(informacion, tipo, distributivo_id)
-            respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
+            informacion=servicios_t.get_info(distributivo_id)
+            #servicios_t.get_data(distributivo_id)
+            respuesta=servicios_t.gen_reporte(informacion, tipo, distributivo_id)
+            #respuesta = servicios.get_pdf(nombre_docente, distributivo_id, tipo)
         else:
             mensaje = "El documento ya se ha generado"
             alerta = 'danger'
             dato = {'mensaje': mensaje, 'alerta': alerta}
             return render(request, 'tutoria/docente/error.html', dato)
     else:
-        # respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
+        #respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no se puede generar, no hay tutorias registradas"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta}
         return render(request, 'tutoria/docente/error.html', dato)
 
     return respuesta
+
+def validarfirma(request):
+    dato = {}
+    if request.method == 'POST':
+        form = ValidarFirmaForm(request.POST)
+        if form.is_valid():
+
+            firma_hash = form.save()
+
+            firma_hash.save()
+            print(form.cleaned_data['documento_id'])
+            valid = servicios.validarfirma(form.cleaned_data['documento_id'])
+            print(valid)
+            if valid == True:
+
+                mensaje = 'Documento Válido'
+                alerta = 'success'
+                dato = {'mensaje': mensaje, 'alerta': alerta}
+                print(dato)
+                return render(request, 'registro/docente/confirmacion.html', dato)
+            else:
+                mensaje = "No existe Documento"
+                alerta = 'danger'
+                dato = {'mensaje': mensaje, 'alerta': alerta}
+                return render(request, 'registro/docente/confirmacion.html', dato)
+
+
+    else:
+        form = ValidarFirmaForm()
+
+    return render(request, 'registro/docente/validarfirma.html', {'form': form})

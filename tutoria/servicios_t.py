@@ -95,8 +95,14 @@ class Servicios_t(object):
 
 
     def get_timestamp(self,estudiante,parcial,periodo,distributivo_id):
-        time_stamp=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('timestamp',flat=True)
-        return time_stamp
+        #time_stamp=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('timestamp',flat=True)
+        time_stamp = Firma.objects.filter(reporte__distributivo_id=distributivo_id, estudiante=estudiante,
+                                      reporte__parcial=parcial, reporte__distributivo__periodo=periodo)
+        lista=[]
+        for i in time_stamp:
+            lista.append(i.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
+        #fecha = str(time_stamp.strftime("%Y-%m-%d %H:%M:%S"))
+        return lista
 
     def get_duracion(self,estudiante,parcial,periodo,distributivo_id):
         duracion=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('duracion',flat=True)
@@ -222,6 +228,22 @@ class Servicios_t(object):
             duracion_aux = []
         print("informacion", informacion)
         return informacion
+
+    def verificar_estado_informe(self, materia, tipo):
+        print(materia)
+        #i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo)
+        #i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
+        periodo=Periodo.objects.filter(activo=True).first()
+        i = ReporteTutoria.objects.filter(distributivo_id=materia,parcial=PARCIAL).values()
+        print("tipo///",tipo)
+        print("////estado",i)
+        if len(i)!=0:
+
+            print(i.first()['estado'])
+            return i.first()
+        else:
+            print("resultado nulo")
+            return None
 
     def gen_reporte(self, datos, tipo, distributivo):
         allclientes2=[]
