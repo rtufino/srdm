@@ -2,13 +2,14 @@ from django.urls import include, path
 
 from .views import registro, docente, estudiante
 
+
 urlpatterns = [
     path('docente/', include((
         [
             path('', docente.home, name='home'),
             path('<distributivo_id>/', docente.estudiantesList, name='estudiantes_list'),
             path('revex/<materia> <tipo>/', docente.documentos_pdf, name='documentos_pdf'),
-            path('validar/', docente.validarfirma, name='validarfirma'),
+            #path('validar/', docente.validarfirma, name='validarfirma'),
 
         ], 'classroom'),
         namespace='registro_docente')),
