@@ -6,9 +6,89 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth import get_user
 
-from registro.models import Distributivo, Periodo, Estudiante
+from registro.models import Distributivo, Periodo, Estudiante, Alumno
 from tutoria.models import Tarjeta, ReporteTutoria, Firma
 from registro.decorators import estudiante_required
+from SRDM.util import get_link_tutorias, get_link_documentos, get_periodo_activo
+from tutoria.servicios_t import Servicios_t, PARCIAL
+
+
+@login_required
+@estudiante_required
+def home(request):
+    # Obtener estudiante
+    user = get_user(request)
+    estudiante = Estudiante.objects.filter(usuario=user).first()
+    # Obtener materias
+    materias = obtener_materias(estudiante)
+    # Utilizar servicios para número de tutorias
+    servicio = Servicios_t()
+    num_tutorias = []
+    for m in materias:
+        n = servicio.get_num_tutorias(estudiante, PARCIAL, get_periodo_activo(), m.id)
+        tutoria = {
+            'materia': m.id,
+            'numero': n
+        }
+        num_tutorias.append(tutoria)
+    # Armar diccionario para enviar a la vista
+    context = {
+        'link_documentos': get_link_documentos(request.user),
+        'link_tutorias': get_link_tutorias(request.user),
+        'materias': materias,
+        'tutorias': num_tutorias,
+        'menu': 'tutorias'
+    }
+    # Renderizar la vista
+    return render(request, 'tutoria/estudiante/home.html', context)
+
+
+def obtener_materias(estudiante: Estudiante):
+    # obtener el periodo activo
+    periodo = get_periodo_activo()
+    # obtener los registros donde el estudiante es alumno
+    listado = Alumno.objects.filter(estudiante=estudiante)
+    # obtener el id de los distributivos a los que el alumno pertenece
+    ids = []
+    for a in listado:
+        ids.append(a.distributivo.id)
+    # consultar las materias donde el estudiante es alumno del periodo activo
+    distributivos = Distributivo.objects.filter(periodo=periodo).filter(pk__in=ids).order_by('materia__carrera',
+                                                                                             'materia__nivel')
+    return distributivos
+
+
+@login_required
+@estudiante_required
+def detalle(request, distributivo_id):
+    # Obtener estudiante
+    user = get_user(request)
+    estudiante = Estudiante.objects.filter(usuario=user).first()
+    # Obtner tutorias
+    distributivo = Distributivo.objects.filter(pk=distributivo_id).first()
+    reporte = ReporteTutoria.objects.filter(distributivo=distributivo).first()
+    firmas = Firma.objects.filter(reporte=reporte).filter(estudiante=estudiante)
+    # retornar las firmas
+    data = []
+    n = 1
+    for f in firmas:
+        d = {
+            'numero': n,
+            'fecha': f.timestamp,
+            'duracion': f.duracion,
+            'tema': f.tema
+        }
+        data.append(d)
+        n += 1
+    context = {
+        'tutorias': data,
+        'asignatura': distributivo.materia.nombre + " - G" + distributivo.grupo,
+        'distributivo_id': distributivo_id,
+        'link_documentos': get_link_documentos(user),
+        'link_tutorias': get_link_tutorias(user),
+        'menu': 'tutorias'
+    }
+    return render(request, 'tutoria/estudiante/detalle.html', context)
 
 
 @login_required

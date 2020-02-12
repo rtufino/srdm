@@ -6,6 +6,7 @@ from django.contrib.auth import get_user
 
 from ..decorators import estudiante_required
 from ..models import Estudiante, Periodo, Distributivo, Alumno, Informe, Firma
+from SRDM.util import get_link_documentos, get_link_tutorias
 
 
 @login_required
@@ -15,9 +16,24 @@ def home(request):
     user = get_user(request)
     estudiante = Estudiante.objects.filter(usuario=user)[0]
     # print(estudiante)
-    materias, documentos = obtener_datos(estudiante)
-    # print(materias,documentos)
-    datos = {'materias': materias, 'documentos': documentos}
+    materias, informes = obtener_datos(estudiante)
+    documentos = []
+    for i in informes:
+        doc = {
+            'distributivo': i.distributivo,
+            'esta_habilitado': i.esta_habilitado(),
+            'puede_firmar': puede_firmar(estudiante, i),
+            'id': i.id,
+            'codigo': i.documento.codigo
+        }
+        documentos.append(doc)
+    datos = {
+        'materias': materias,
+        'documentos': documentos,
+        'link_documentos': get_link_documentos(user),
+        'link_tutorias': get_link_tutorias(user),
+        'menu': 'documentos'
+    }
     return render(request, 'registro/estudiante/home.html', datos)
 
 
@@ -45,7 +61,7 @@ def documento(request, id_informe):
     user = get_user(request)
     estudiante = Estudiante.objects.filter(usuario=user)[0]
     if not es_valido(informe, estudiante):
-        return redirect('estudiante:home')
+        return redirect('registro_estudiante:home')
     if puede_firmar(estudiante, informe):
         datos = {
             'informe': informe,
@@ -55,13 +71,19 @@ def documento(request, id_informe):
             'materia': informe.distributivo.materia,
             'nivel': informe.distributivo.materia.nivel,
             'grupo': informe.distributivo.grupo,
-            'cedula': estudiante.cedula
+            'cedula': estudiante.cedula,
+            'link_documentos': get_link_documentos(user),
+            'link_tutorias': get_link_tutorias(user),
+            'menu': 'documentos'
         }
         return render(request, 'registro/estudiante/documento.html', datos)
     else:
         mensaje = 'Tu ya has firmado este documento'
         alerta = 'danger'
-        dato = {'mensaje': mensaje, 'alerta': alerta}
+        dato = {'mensaje': mensaje, 'alerta': alerta,
+                'link_documentos': get_link_documentos(user),
+                'link_tutorias': get_link_tutorias(user),
+                'menu': 'documentos'}
         return render(request, 'registro/estudiante/confirmacion.html', dato)
 
 
@@ -105,7 +127,11 @@ def firmar(request):
     else:
         mensaje = 'Invocación incorrrecta al método'
         alerta = 'danger'
-    dato = {'mensaje': mensaje, 'alerta': alerta}
+    dato = {'mensaje': mensaje, 'alerta': alerta,
+            'link_documentos': get_link_documentos(user),
+            'link_tutorias': get_link_tutorias(user),
+            'menu': 'documentos'
+            }
     return render(request, 'registro/estudiante/confirmacion.html', dato)
 
 

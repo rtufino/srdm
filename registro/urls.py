@@ -19,6 +19,6 @@ urlpatterns = [
             path('<int:id_informe>', estudiante.documento, name='documento'),
             path('firmar', estudiante.firmar, name='firmar'),
         ], 'classroom1'),
-        namespace='estudiante')),
+        namespace='registro_estudiante')),
 
 ]

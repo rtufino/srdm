@@ -1,13 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Firmar</h1>
+</div>
 
-    <h2>Firmar</h2>
-
-    <div class="alert alert-{{ alerta }}" role="alert">
-        {{ mensaje }}
+<div class="row">
+    <div class="col-sm">
+        <div class="alert alert-{{ alerta }}" role="alert">
+            {{ mensaje }}
+        </div>
+        <a class="btn btn-primary" href="{% url 'registro_estudiante:home' %}">Regresar</a>
     </div>
-
-    <a class="btn btn-primary" href="{% url 'estudiante:home' %}">Regresar</a>
-
+</div>
 {% endblock %}

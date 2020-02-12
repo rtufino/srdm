@@ -1,0 +1,61 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+     xmlns="http://www.w3.org/1999/html">
+    <h1 class="h2">Registro de Tutorías</h1>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Carrera</th>
+                    <th>Materia</th>
+                    <th>Nivel</th>
+                    <!-- <th>Grupo</th> -->
+                    <th>Número</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for m in materias %}
+                <tr>
+                    <td>{{ m.materia.carrera.nombre }}</td>
+                    <td>
+                        {% for n in tutorias %}
+                        {% if n.materia == m.id %}
+                        {% if n.numero > 0 %}
+                        <span> <a href="{% url 'tutoria_estudiante:detalle' m.id %}">{{ m.materia.nombre }}</a></span>
+                        {% else %}
+                        {{ m.materia.nombre }}
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ m.materia.nivel }}</td>
+                    <!-- <td>{{ m.grupo }}</td> -->
+                    <td>
+                        {% for n in tutorias %}
+                        {% if n.materia == m.id %}
+                        {% if n.numero > 0 %}
+                        <span class="badge badge-info">{{ n.numero }}</a></span>
+                        {% else %}
+                        <span class="badge badge-secondary">0</span>
+                        {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <a href="{%  url 'home' %}" class="btn btn-primary">Dashboard</a>
+    </div>
+</div>
+{% endblock %}

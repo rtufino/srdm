@@ -7,13 +7,12 @@ from django.shortcuts import render, redirect
 from ..decorators import docente_required
 from registro.servicios import Servicios
 # from tutoria.servicios_t import Servicios_t
-
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from registro.models import ValidarFirma
 from registro.forms import ValidarFirmaForm
-
 from ..models import Documento, Distributivo, Periodo
+from SRDM.util import get_link_documentos, get_link_tutorias
 
 PARCIAL = 1
 
@@ -45,12 +44,23 @@ def home(request):
     else:
         mensaje = 'No existen materias registradas para el docente'
         alerta = 'danger'
-        dato = {'mensaje': mensaje, 'alerta': alerta}
+        dato = {'mensaje': mensaje, 'alerta': alerta,
+                'link_documentos': get_link_documentos(usuario),
+                'link_tutorias': get_link_tutorias(usuario),
+                'menu': 'documentos'}
         print(dato)
         return render(request, 'registro/docente/confirmacion.html', dato)
 
-    context = {"fecha": fecha_actual, "materias": materias, "docente": nombre_docente, "grupo": p.grupo,
-               "periodo": p.periodo}
+    context = {
+        "fecha": fecha_actual,
+        "materias": materias,
+        "docente": nombre_docente,
+        "grupo": p.grupo,
+        "periodo": p.periodo,
+        'link_documentos': get_link_documentos(usuario),
+        'link_tutorias': get_link_tutorias(usuario),
+        'menu': 'documentos'
+    }
 
     return render(request, 'registro/docente/listado_list.html', context)
 
@@ -78,7 +88,10 @@ def estudiantesList(request, distributivo_id):
     if val == False:
         mensaje = 'No tiene permiso para ver esta página'
         alerta = 'danger'
-        dato = {'mensaje': mensaje, 'alerta': alerta}
+        dato = {'mensaje': mensaje, 'alerta': alerta,
+                'link_documentos': get_link_documentos(usuario),
+                'link_tutorias': get_link_tutorias(usuario),
+                'menu': 'documentos'}
         print(dato)
         return render(request, 'registro/docente/error.html', dato)
     # obtener el periodo activo
@@ -125,7 +138,10 @@ def estudiantesList(request, distributivo_id):
         "materia": distributivo_id,
         "docente": nombre_docente,
         "alumnos": datos,
-        "asignatura": asignatura
+        "asignatura": asignatura,
+        'link_documentos': get_link_documentos(usuario),
+        'link_tutorias': get_link_tutorias(usuario),
+        'menu': 'documentos'
     }
     print(context2)
     return render(request, 'registro/docente/estudiantes_list.html', context2)
@@ -141,19 +157,25 @@ def documentos_pdf(request, materia, tipo):
     s = servicios.verificar_estado_informe(materia, tipo)
     print("estado", s)
 
-    if s != None:
+    if s is not None:
         if s['estado'] != "C":
             respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         else:
             mensaje = "El documento ya se ha generado"
             alerta = 'danger'
-            dato = {'mensaje': mensaje, 'alerta': alerta}
+            dato = {'mensaje': mensaje, 'alerta': alerta,
+                    'link_documentos': get_link_documentos(usuario),
+                    'link_tutorias': get_link_tutorias(usuario),
+                    'menu': 'documentos'}
             return render(request, 'registro/docente/error.html', dato)
     else:
         # respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no es necesario para este período"
         alerta = 'danger'
-        dato = {'mensaje': mensaje, 'alerta': alerta}
+        dato = {'mensaje': mensaje, 'alerta': alerta,
+                'link_documentos': get_link_documentos(usuario),
+                'link_tutorias': get_link_tutorias(usuario),
+                'menu': 'documentos'}
         return render(request, 'registro/docente/error.html', dato)
 
     return respuesta
@@ -171,20 +193,24 @@ def validarfirma(request):
             print(form.cleaned_data['documento_id'])
             valid = servicios.validarfirma(form.cleaned_data['documento_id'])
             print(valid)
-            if valid == True:
+            if valid:
 
                 mensaje = 'Documento Válido'
                 alerta = 'success'
-                dato = {'mensaje': mensaje, 'alerta': alerta}
+                dato = {'mensaje': mensaje, 'alerta': alerta,
+                        'link_documentos': get_link_documentos(get_user(request)),
+                        'link_tutorias': get_link_tutorias(get_user(request)),
+                        'menu': 'documentos'}
                 print(dato)
                 return render(request, 'registro/docente/confirmacion.html', dato)
             else:
                 mensaje = "No existe Documento"
                 alerta = 'danger'
-                dato = {'mensaje': mensaje, 'alerta': alerta}
+                dato = {'mensaje': mensaje, 'alerta': alerta,
+                        'link_documentos': get_link_documentos(get_user(request)),
+                        'link_tutorias': get_link_tutorias(get_user(request)),
+                        'menu': 'documentos'}
                 return render(request, 'registro/docente/confirmacion.html', dato)
-
-
     else:
         form = ValidarFirmaForm()
 

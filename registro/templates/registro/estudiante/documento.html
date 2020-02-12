@@ -1,76 +1,85 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
 
-    <h3>{{ informe.documento.descripcion }}</h3>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">{{ informe.documento.codigo }}</h1>
+    <p>{{ informe.documento.descripción }}</p>
+</div>
 
-    <table class="table">
-        <tr>
-            <td>Carrera:</td>
-            <td>{{ carrera }}</td>
-        </tr>
-        <tr>
-            <td>Materia:</td>
-            <td>{{ materia }}</td>
-        </tr>
-        <tr>
-            <td>Nivel:</td>
-            <td>{{ nivel }}</td>
-        </tr>
-        <tr>
-            <td>Grupo:</td>
-            <td>{{ grupo }}</td>
-        </tr>
-        <tr>
-            <td>Período:</td>
-            <td>{{ periodo.descripcion }}</td>
-        </tr>
-        <tr>
-            <td>Parcial:</td>
-            <td>{{ informe.parcial }}</td>
-        </tr>
-        <tr>
-            <td>Fecha de habilitación:</td>
-            <td>{{ informe.fecha_habilitacion }}</td>
-        </tr>
-        <tr>
-            <td>Fecha de cierre:</td>
-            <td>{{ informe.fecha_cierre }}</td>
-        </tr>
-    </table>
-
-
-    <form class="form-group" action="{% url 'estudiante:firmar' %}" method="post">
-        {% csrf_token %}
-        <fieldset>
-            <legend>
-                Firmar
-            </legend>
-            <label>
-                Yo <strong>{{ user.first_name }} {{ user.last_name }}</strong> con número de cédula {{ cedula }},
-                declaro que el docente {{ docente }}, {{ informe.documento.mensaje_compromiso }}
-            </label>
-            <input type="hidden" name="informe" value="{{ informe.id }}">
-            <div class="form-group">
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="aceptar" value="SI" id="check1"
-                           checked="checked"/>
-                    <label class="form-check-label" for="check1">
-                        SI
-                    </label>
+<div class="row">
+    <div class="col-sm">
+        <table class="table table-bordered">
+            <tr>
+                <td>Carrera:</td>
+                <td>{{ carrera }}</td>
+            </tr>
+            <tr>
+                <td>Materia:</td>
+                <td>{{ materia }}</td>
+            </tr>
+            <tr>
+                <td>Nivel:</td>
+                <td>{{ nivel }}</td>
+            </tr>
+            <tr>
+                <td>Grupo:</td>
+                <td>{{ grupo }}</td>
+            </tr>
+            <tr>
+                <td>Período:</td>
+                <td>{{ periodo.descripcion }}</td>
+            </tr>
+            <tr>
+                <td>Parcial:</td>
+                <td>{{ informe.parcial }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de habilitación:</td>
+                <td>{{ informe.fecha_habilitacion }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de cierre:</td>
+                <td>{{ informe.fecha_cierre }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <form class="form-group" action="{% url 'registro_estudiante:firmar' %}" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend>
+                    Firmar
+                </legend>
+                <label>
+                    Yo <strong>{{ user.first_name }} {{ user.last_name }}</strong> con número de cédula {{ cedula }},
+                    declaro que el docente {{ docente }}, {{ informe.documento.mensaje_compromiso }}
+                </label>
+                <input type="hidden" name="informe" value="{{ informe.id }}">
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="aceptar" value="SI" id="check1"
+                               checked="checked"/>
+                        <label class="form-check-label" for="check1">
+                            SI
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" name="aceptar" value="NO" id="check2"/>
+                        <label class="form-check-label" for="check2">
+                            NO
+                        </label>
+                    </div>
                 </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" name="aceptar" value="NO" id="check2"/>
-                    <label class="form-check-label" for="check2">
-                        NO
-                    </label>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success">Firmar</button>
+                    <a class="btn btn-warning" href="{% url 'registro_estudiante:home' %}">Cancelar</a>
                 </div>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">Firmar</button>
-                <a class="btn btn-warning" href="{% url 'estudiante:home' %}">Cancelar</a>
-            </div>
-        </fieldset>
-    </form>
+            </fieldset>
+        </form>
+    </div>
+</div>
 
 {% endblock %}

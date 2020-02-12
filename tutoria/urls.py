@@ -13,6 +13,8 @@ urlpatterns = [
         namespace='tutoria_docente')),
     path('estudiante/', include((
         [
+            path('', estudiante.home, name='home'),
+            path('detalle/<int:distributivo_id>/', estudiante.detalle, name='detalle'),
             path('registrar/<str:codigo_hash>', estudiante.registrar, name='registrar'),
             path('firmar/', estudiante.firmar, name='firmar'),
             path('confirmar/', estudiante.confirmar, name='confirmar'),

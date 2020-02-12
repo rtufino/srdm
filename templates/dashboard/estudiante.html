@@ -1,0 +1,40 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+</div>
+<div class="row">
+    <div class="col" style="width: 18rem;">
+        <p class="h4">BIENVENID@ {{ estudiante }}</p>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-sm" style="margin-bottom: 10px">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Documentos</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Documentos microcuriculares</h6>
+                <p class="card-text">Permite firma los documentos microcurriculares <i>ADM, RN30 y REVEX</i>.</p>
+                <a href="{%  url link_documentos %}" class="btn btn-primary">Firmar</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm" style="margin-bottom: 10px">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Tutorías</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Registro de tutorías</h6>
+                <p class="card-text">Permite visualizar las tutorías a las que has asistido.</p>
+                <a href="{%  url link_tutorias %}" class="btn btn-primary">Revisar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

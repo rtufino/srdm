@@ -1,45 +1,54 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Documentos Microcurriculares</h1>
+</div>
 
-    <h3>Documentos microcurriculares</h3>
-
-    <div class="table-responsive">
-        <table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th>Carrera</th>
-                <th>Materia</th>
-                <th>Grupo</th>
-                <th>Nivel</th>
-                <th>Período</th>
-                <th>Documentos</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for m in materias %}
+<div class="row">
+    <div class="col-sm">
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Carrera</th>
+                    <th>Materia</th>
+                    <th>Nivel</th>
+                    <th>Grupo</th>
+                    <!-- <th>Período</th> -->
+                    <th>Documentos</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for m in materias %}
                 <tr>
                     <td>{{ m.materia.carrera.nombre }}</td>
                     <td>{{ m.materia.nombre }}</td>
-                    <td>{{ m.grupo }}</td>
                     <td>{{ m.materia.nivel }}</td>
-                    <td>{{ m.periodo }}</td>
+                    <td>{{ m.grupo }}</td>
+                    <!-- <td>{{ m.periodo }}</td> -->
                     <td>
                         {% for d in documentos %}
-                            {% if d.distributivo == m %}
-                                {% if d.esta_habilitado %}
-                                    <span> <a class="badge badge-primary"
-                                              href="{% url 'estudiante:documento' d.id %}">{{ d.documento.codigo }}</a></span>
-                                {% else %}
-                                    <span class="badge badge-secondary">{{ d.documento.codigo }}</span>
-                                {% endif %}
-                            {% endif %}
+                        {% if d.distributivo == m %}
+                        {% if d.esta_habilitado and d.puede_firmar %}
+                        <span> <a class="badge badge-success"
+                                  href="{% url 'registro_estudiante:documento' d.id %}">{{ d.codigo }}</a></span>
+                        {% else %}
+                        <span class="badge badge-secondary">{{ d.codigo }}</span>
+                        {% endif %}
+                        {% endif %}
                         {% endfor %}
                     </td>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-sm">
+        <a href="{%  url 'home' %}" class="btn btn-primary">Dashboard</a>
+    </div>
+</div>
 {% endblock %}
