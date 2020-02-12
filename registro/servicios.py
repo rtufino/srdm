@@ -218,13 +218,17 @@ class Servicios(object):
         if hash_doc==True:
 
             return hash_doc
+
         elif hash_doc==False:
+
             hash_doc = ReporteTutoria.objects.filter(hash=hash_id).values("hash").exists()
+
             if hash_doc==True:
 
                 return hash_doc
             else:
                 hash_doc=None
+                return hash_doc
 
 
 

@@ -160,33 +160,3 @@ def documentos_pdf(request, distributivo_id, tipo):
 
     return respuesta
 
-def validarfirma(request):
-    dato = {}
-    if request.method == 'POST':
-        form = ValidarFirmaForm(request.POST)
-        if form.is_valid():
-
-            firma_hash = form.save()
-
-            firma_hash.save()
-            print(form.cleaned_data['documento_id'])
-            valid = servicios.validarfirma(form.cleaned_data['documento_id'])
-            print(valid)
-            if valid == True:
-
-                mensaje = 'Documento Válido'
-                alerta = 'success'
-                dato = {'mensaje': mensaje, 'alerta': alerta}
-                print(dato)
-                return render(request, 'registro/docente/confirmacion.html', dato)
-            else:
-                mensaje = "No existe Documento"
-                alerta = 'danger'
-                dato = {'mensaje': mensaje, 'alerta': alerta}
-                return render(request, 'registro/docente/confirmacion.html', dato)
-
-
-    else:
-        form = ValidarFirmaForm()
-
-    return render(request, 'registro/docente/validarfirma.html', {'form': form})

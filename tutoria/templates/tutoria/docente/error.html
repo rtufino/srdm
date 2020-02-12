@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'dashboard/base.html' %}
 
 {% block content %}
 
@@ -8,6 +8,6 @@
         {{ mensaje }}
     </div>
 
-    <a class="btn btn-primary" href="{% url 'tutoria:home_docente' %}">Regresar</a>
+    <a class="btn btn-primary" href="{% url 'tutoria_docente:home' %}">Regresar</a>
 
 {% endblock %}
