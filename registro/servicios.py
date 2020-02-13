@@ -40,7 +40,7 @@ from reportlab.lib.pagesizes import letter
 from django.core.files import File
 import os
 #servicios_t=Servicios_t()
-PARCIAL=1
+PARCIAL=2
 
 class Servicios(object):
     # Funcion que devuelve el nombre del usuario

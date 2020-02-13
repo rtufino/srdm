@@ -33,7 +33,7 @@ from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.lib.pagesizes import letter
 from django.core.files import File
 
-PARCIAL = 1
+PARCIAL = 2
 servicios = Servicios()
 
 

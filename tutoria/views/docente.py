@@ -9,9 +9,8 @@ from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from SRDM.util import get_link_tutorias, get_link_documentos
-from collections import defaultdict
+from ..servicios_t import PARCIAL
 
-PARCIAL = 1
 
 servicios = Servicios()
 servicios_t = Servicios_t()

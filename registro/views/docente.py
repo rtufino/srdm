@@ -13,8 +13,7 @@ from registro.models import ValidarFirma
 from registro.forms import ValidarFirmaForm
 from ..models import Documento, Distributivo, Periodo
 from SRDM.util import get_link_documentos, get_link_tutorias
-
-PARCIAL = 1
+from ..servicios import PARCIAL
 
 servicios = Servicios()
 
