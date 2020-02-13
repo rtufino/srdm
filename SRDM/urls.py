@@ -22,7 +22,7 @@ from SRDM import dashboard
 
 urlpatterns = [
     path('', dashboard.home, name='home'),
-    path('validar/',dashboard.validarfirma,name='validarfirma'),
+    path('validar/', dashboard.validarfirma, name='validarfirma'),
     path('registro/', include('registro.urls')),
     path('tutoria/', include('tutoria.urls')),
     path('autenticacion/', include('django.contrib.auth.urls')),

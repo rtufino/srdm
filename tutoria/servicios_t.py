@@ -388,7 +388,9 @@ class Servicios_t(object):
 
         # print(allclientes2)
 
-        t = Table([headings] + allclientes2, repeatRows=0, colWidths=[7 * cm, 2 * cm, 3.5 * cm, 3 * cm, 2 * cm, 3 * cm])
+        t = Table([headings] + allclientes2,
+                  repeatRows=0,
+                  colWidths=[7 * cm, 2 * cm, 4 * cm, 3 * cm, 1.5 * cm, 3 * cm])
         # t = Table([headings], repeatRows=0)
         t.setStyle(TableStyle(
             [

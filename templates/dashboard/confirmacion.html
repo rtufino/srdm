@@ -1,8 +1,28 @@
-{% extends 'dashboard/base.html' %}
+{% load static %}
 
-{% block content %}
+{% load bootstrap4 %}
 
-    <h2>Validación</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Papeles{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/favicon.png' %}">
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}"> -->
+    {# CSS Bootstrap #}
+    {% bootstrap_css %}
+</head>
+<body class="bg-light">
+<div class="container">
+
+    <div class="row" style="padding-top: 15px">
+        <div class="col-sm">
+            <h1 class="display-5">Validar firma</h1>
+            <p class="lead">Introduca el codigo del documento para validar.</p>
+        </div>
+    </div>
+
 
     <div class="alert alert-{{ alerta }}" role="alert">
         {{ mensaje }}
@@ -10,4 +30,17 @@
 
     <a class="btn btn-primary" href="{% url 'validarfirma' %}">Regresar</a>
 
-{% endblock %}
+    <div style="bottom: 0px; text-align: center; padding: 10px">
+        © UPS 2019 - 2020<br>
+        Carrera en Ciencias de la Computación<br>
+        <div class="text-muted">
+            Desarrollado por
+            <a class="text-muted" href="http://julioproano.info" target="_blank">Julio Proaño</a> y
+            <a class="text-muted" href="http://rodrigotufino.info" target="_blank">Rodrigo Tufiño</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

@@ -14,11 +14,14 @@ class UsuarioChangeForm(UserChangeForm):
         model = Usuario
         fields = ('first_name', 'last_name', 'username', 'email')
 
+
 class FirmaForm(forms.ModelForm):
     class Meta:
         model = Informe
         fields = ('archivo',)
+
+
 class ValidarFirmaForm(forms.ModelForm):
     class Meta:
-        model=ValidarFirma
-        fields=('documento_id',)
+        model = ValidarFirma
+        fields = ('documento_id',)
