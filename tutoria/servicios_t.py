@@ -1,5 +1,5 @@
 from tutoria.models import Firma, ReporteTutoria
-from registro.models import Periodo, Distributivo
+from registro.models import Periodo, Distributivo,Docente
 from registro.servicios import Servicios
 import time
 from django.http import HttpResponseRedirect
@@ -38,6 +38,18 @@ servicios = Servicios()
 
 
 class Servicios_t(object):
+
+    def get_cedula(self,user):
+        cedula=Docente.objects.filter(usuario_id=user)
+        for i in cedula:
+            cedula_aux=i
+            print(cedula)
+        return cedula_aux
+
+    def generar_hash(self,cedula):
+        codigo_hash=hashlib.sha224(cedula).hexdigest()
+        print("codigo_hash",codigo_hash)
+        return codigo_hash
 
     def get_num_tutorias(self, estudiante, parcial, periodo, distributivo_id):
         # funcion recibe estudiante y devuelve el número de tutorias tomadas

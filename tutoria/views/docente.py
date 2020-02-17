@@ -20,8 +20,11 @@ servicios_t = Servicios_t()
 @docente_required
 def home(request):
     usuario = get_user(request)
+
+
     nombre_docente = servicios.getuser(usuario)
     print("Docente:", nombre_docente)
+
     # obtener el periodo activo
     periodo = Periodo.objects.filter(activo=True).first()
     materias = servicios.getmaterias(nombre_docente, periodo)
@@ -178,4 +181,12 @@ def documentos_pdf(request, distributivo_id, tipo):
         return render(request, 'tutoria/docente/error.html', dato)
 
     return respuesta
+
+def gen_qr(request):
+    base_url=""
+    usuario = get_user(request)
+    cedula_docente = servicios_t.get_cedula(usuario)
+    codigo_hash = servicios_t.generar_hash(cedula_docente)
+    qr_hash_url = servicios_t.createqr(base_url+ str(codigo_hash))
+    return render(request,'tutoria/docente/qr_code.html',qr_hash_url)
 
