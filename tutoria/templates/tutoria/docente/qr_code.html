@@ -1,0 +1,17 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+
+    <h2>Código QR</h2>
+
+<picture>
+  <source media="(min-width: 600px)" srcset="html5-logo-xl.png">
+  <source media="(min-width: 300px) and (max-width: 600px)"
+                                    srcset="html5-logo-large.png">
+  <source media="(max-width: 50px)" srcset="html5-logo-small.png">
+  <img src={{qr_hash_url}} alt="QR-CODE">
+</picture>
+
+    <a class="btn btn-primary" href="{% url 'tutoria_docente:home' %}">Regresar</a>
+
+{% endblock %}
