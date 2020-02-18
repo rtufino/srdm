@@ -6,7 +6,7 @@ from .models import Tarjeta, ReporteTutoria, Firma
 
 class TarjetaAdmin(admin.ModelAdmin):
     model = Tarjeta
-    list_display = 'codigo', 'docente', 'hash'
+    list_display = 'archivo', 'docente', 'hash'
     search_fields = ['docente__usuario__first_name', 'docente__usuario__last_name']
 
 

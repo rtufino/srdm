@@ -1,4 +1,4 @@
-from tutoria.models import Firma, ReporteTutoria
+from tutoria.models import Firma, ReporteTutoria,Tarjeta
 from registro.models import Periodo, Distributivo,Docente
 from registro.servicios import Servicios
 import time
@@ -37,7 +37,7 @@ from reportlab.lib.pagesizes import letter
 from django.core.files import File
 
 PARCIAL = 2
-IP='localhost'
+IP='172.17.42.144'
 servicios = Servicios()
 
 
@@ -49,6 +49,34 @@ class Servicios_t(object):
             print(i['cedula'])
         print("cedula",i['cedula'])
         return i['cedula']
+
+    def set_qr_hash_url(self,docente,qr_hash,url):
+        docente_id = Docente.objects.filter(usuario=docente).values("id")
+        url_aux="http://"+str(url)
+        for i in docente_id:
+            docente_aux=i['id']
+        print("docente_id",docente_aux)
+        t=Tarjeta.objects.filter(docente_id=docente_aux)
+
+        print("existe",t.exists())
+        if t.exists() is False:
+            t=Tarjeta(
+                docente_id=docente_aux,
+                hash=qr_hash,
+                url=url_aux,
+            )
+            t.save()
+        else:
+            t_aux = Tarjeta.objects.get(docente_id=docente_aux)
+            t_aux.url=url_aux
+            t_aux.hash=qr_hash
+            t_aux.save()
+        print("guarda hash")
+        return
+
+
+
+
 
     def crear_directorio_qr(self,periodo,docente):
 

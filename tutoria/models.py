@@ -5,7 +5,7 @@ from registro.models import Distributivo, Docente, Estudiante
 # Create your models here.
 
 class Tarjeta(models.Model):
-    codigo = models.CharField(max_length=7, null=False, unique=True)
+    archivo = models.CharField(max_length=7, null=True, unique=True)
     hash = models.CharField(max_length=512, null=True, blank=True)
     docente = models.ForeignKey(Docente, on_delete=models.CASCADE, null=True)
     url = models.URLField(null=True, blank=True)

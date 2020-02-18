@@ -199,6 +199,7 @@ def generar_qr(request):
     servicios_t.generar_qr_png(base_url+str(codigo_hash),output)
     qr_hash_url="http://" + str(IP)+":"+str(8000) + "/" + str(directorio)+"/"+ str(cedula_docente) + ".png"
     print("url",qr_hash_url)
+    servicios_t.set_qr_hash_url(usuario,codigo_hash,base_url+str(codigo_hash))
     context = {
                'qr_hash_url':qr_hash_url,
                'link_documentos': get_link_documentos(usuario),
