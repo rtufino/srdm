@@ -18,7 +18,7 @@ from reportlab.lib.units import mm, cm
 from reportlab.platypus import Table
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
-
+import os
 import hashlib
 import io
 from io import BytesIO
@@ -28,26 +28,53 @@ from reportlab.pdfgen import canvas
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
 
+import qrcode
+from PIL import Image
+
 # Create your views here.
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from reportlab.lib.pagesizes import letter
 from django.core.files import File
 
 PARCIAL = 2
+IP='localhost'
 servicios = Servicios()
 
 
 class Servicios_t(object):
 
     def get_cedula(self,user):
-        cedula=Docente.objects.filter(usuario_id=user)
+        cedula=Docente.objects.filter(usuario=user).values("cedula")
         for i in cedula:
-            cedula_aux=i
-            print(cedula)
-        return cedula_aux
+            print(i['cedula'])
+        print("cedula",i['cedula'])
+        return i['cedula']
+
+    def crear_directorio_qr(self,periodo,docente):
+
+
+        path="./media/qrs"+"/"+str(periodo)
+        print(path)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return str(path)
+
+    def generar_qr_png(self,enlace,output):
+
+        qr = qrcode.QRCode(box_size=4)
+        qr.add_data(enlace)
+        qr.make()
+        img=qr.make_image()
+
+
+        #img = qrcode.make(enlace)
+
+        img.save(output)
+
+        return
 
     def generar_hash(self,cedula):
-        codigo_hash=hashlib.sha224(cedula).hexdigest()
+        codigo_hash=hashlib.sha224(str(cedula).encode()).hexdigest()
         print("codigo_hash",codigo_hash)
         return codigo_hash
 

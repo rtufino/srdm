@@ -6,9 +6,11 @@ urlpatterns = [
     path('docente/', include((
         [
             path('', docente.home, name='home'),
+            path('qr/', docente.generar_qr,name='generar_qr'),
             path('<distributivo_id>/', docente.estudiantesList, name='estudiantes_list'),
             path('detalle/<int:distributivo_id>/<int:estudiante_id>/', docente.detalle_tutoria, name='detalle_tutoria'),
             path('<distributivo_id>/<tipo>/', docente.documentos_pdf, name='documentos_pdf'),
+
         ], 'classrom3'),
         namespace='tutoria_docente')),
     path('estudiante/', include((

@@ -10,7 +10,7 @@ from tutoria.models import Firma, ReporteTutoria
 from tutoria.servicios_t import Servicios_t
 from SRDM.util import get_link_tutorias, get_link_documentos
 from ..servicios_t import PARCIAL
-
+from ..servicios_t import IP
 
 servicios = Servicios()
 servicios_t = Servicios_t()
@@ -182,11 +182,27 @@ def documentos_pdf(request, distributivo_id, tipo):
 
     return respuesta
 
-def gen_qr(request):
-    base_url=""
+@login_required
+@docente_required
+def generar_qr(request):
+
+    ip_address=IP
+    base_url=IP+":"+"8000"+"/tutoria/estudiante/registrar/"
     usuario = get_user(request)
+    periodo = Periodo.objects.filter(activo=True).first()
+    nombre_docente = servicios.getuser(usuario)
     cedula_docente = servicios_t.get_cedula(usuario)
     codigo_hash = servicios_t.generar_hash(cedula_docente)
-    qr_hash_url = servicios_t.createqr(base_url+ str(codigo_hash))
-    return render(request,'tutoria/docente/qr_code.html',qr_hash_url)
+    directorio=servicios_t.crear_directorio_qr(periodo,nombre_docente)
+    output=directorio+"/"+str(cedula_docente)+".png"
+    print("output",output)
+    servicios_t.generar_qr_png(base_url+str(codigo_hash),output)
+    qr_hash_url="http://" + str(IP)+":"+str(8000) + "/" + str(directorio)+"/"+ str(cedula_docente) + ".png"
+    print("url",qr_hash_url)
+    context = {
+               'qr_hash_url':qr_hash_url,
+               'link_documentos': get_link_documentos(usuario),
+               'link_tutorias': get_link_tutorias(usuario),
+               'menu': 'tutorias'}
+    return render(request,'tutoria/docente/qr_code.html',context)
 
