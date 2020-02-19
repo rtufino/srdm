@@ -24,9 +24,15 @@ def get_periodo_activo():
 
 def get_parcial():
     parcial = Parametro.objects.filter(clave='PARCIAL').first()
-    return int(parcial.valor)
+    if parcial is not None:
+        return int(parcial.valor)
+    else:
+        return 1
 
 
 def get_IP():
     param = Parametro.objects.filter(clave='IP').first()
-    return param.valor
+    if param is not None:
+        return param.valor
+    else:
+        return 'http://127.0.0.1:8000'
