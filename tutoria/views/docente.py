@@ -2,15 +2,12 @@ from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from SRDM.util import get_link_tutorias, get_link_documentos
 from registro.decorators import docente_required
-from registro.forms import ValidarFirmaForm
 from registro.models import Distributivo, Periodo, Estudiante
 from registro.servicios import Servicios
 from tutoria.models import Firma, ReporteTutoria
-from tutoria.servicios_t import Servicios_t
-from SRDM.util import get_link_tutorias, get_link_documentos
-from ..servicios_t import PARCIAL
-from ..servicios_t import IP
+from tutoria.servicios_t import Servicios_t, IP
 
 servicios = Servicios()
 servicios_t = Servicios_t()
@@ -20,7 +17,6 @@ servicios_t = Servicios_t()
 @docente_required
 def home(request):
     usuario = get_user(request)
-
 
     nombre_docente = servicios.getuser(usuario)
     print("Docente:", nombre_docente)
@@ -80,7 +76,7 @@ def estudiantesList(request, distributivo_id):
     fecha_actual = servicios.getFechaActual()
     val = servicios.validar_materia_docente(distributivo_id, nombre_docente)
     print("docente", val)
-    if val == False:
+    if not val:
         mensaje = 'No tiene permiso para ver esta página'
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta,
@@ -171,7 +167,6 @@ def documentos_pdf(request, distributivo_id, tipo):
                     'menu': 'tutorias'}
             return render(request, 'tutoria/docente/error.html', dato)
     else:
-        # respuesta = servicios.get_pdf(nombre_docente, materia, tipo)
         mensaje = "El documento no se puede generar, no hay tutorias registradas"
         alerta = 'danger'
         dato = {'mensaje': mensaje, 'alerta': alerta,
@@ -182,28 +177,27 @@ def documentos_pdf(request, distributivo_id, tipo):
 
     return respuesta
 
+
 @login_required
 @docente_required
 def generar_qr(request):
-
-    ip_address=IP
-    base_url=IP+":"+"8000"+"/tutoria/estudiante/registrar/"
+    ip_address = IP
+    base_url = IP + "/tutoria/estudiante/registrar/"
     usuario = get_user(request)
     periodo = Periodo.objects.filter(activo=True).first()
     nombre_docente = servicios.getuser(usuario)
     cedula_docente = servicios_t.get_cedula(usuario)
     codigo_hash = servicios_t.generar_hash(cedula_docente)
-    directorio=servicios_t.crear_directorio_qr(periodo,nombre_docente)
-    output=directorio+"/"+str(cedula_docente)+".png"
-    print("output",output)
-    servicios_t.generar_qr_png(base_url+str(codigo_hash),output)
-    qr_hash_url="http://" + str(IP)+":"+str(8000) + "/" + str(directorio)+"/"+ str(cedula_docente) + ".png"
-    print("url",qr_hash_url)
-    servicios_t.set_qr_hash_url(usuario,codigo_hash,base_url+str(codigo_hash))
+    directorio = servicios_t.crear_directorio_qr(periodo, nombre_docente)
+    output = directorio + "/" + str(cedula_docente) + ".png"
+    print("output", output)
+    servicios_t.generar_qr_png(base_url + str(codigo_hash), output)
+    qr_hash_url = IP + "/" + str(directorio) + "/" + str(cedula_docente) + ".png"
+    print("url", qr_hash_url)
+    servicios_t.set_qr_hash_url(usuario, codigo_hash, base_url + str(codigo_hash))
     context = {
-               'qr_hash_url':qr_hash_url,
-               'link_documentos': get_link_documentos(usuario),
-               'link_tutorias': get_link_tutorias(usuario),
-               'menu': 'tutorias'}
-    return render(request,'tutoria/docente/qr_code.html',context)
-
+        'qr_hash_url': qr_hash_url,
+        'link_documentos': get_link_documentos(usuario),
+        'link_tutorias': get_link_tutorias(usuario),
+        'menu': 'tutorias'}
+    return render(request, 'tutoria/docente/qr_code.html', context)

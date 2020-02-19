@@ -2,12 +2,22 @@
 
 {% block content %}
 
-    <h2>Código QR</h2>
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Código QR</h1>
+    <p>Utilice este código para que los estudiantes registren la tutoría en sus asignaturas.</p>
+</div>
 
-<picture>
-  <img src={{ qr_hash_url }} alt="QR-CODE">
-</picture>
-
-    <a class="btn btn-primary" href="{% url 'tutoria_docente:home' %}">Regresar</a>
+<div class="row">
+    <div class="col-md-6" style="text-align: center">
+        <picture>
+            <img src={{ qr_hash_url }} alt="QR-CODE">
+        </picture>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <a class="btn btn-secondary btn-block" href="{% url 'tutoria_docente:home' %}">Regresar</a>
+    </div>
+</div>
 
 {% endblock %}

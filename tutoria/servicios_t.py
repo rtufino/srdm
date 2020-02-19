@@ -1,109 +1,87 @@
-from tutoria.models import Firma, ReporteTutoria,Tarjeta
-from registro.models import Periodo, Distributivo,Docente
-from registro.servicios import Servicios
-import time
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
-from django.http import HttpResponse
-
-from django.shortcuts import render, redirect
-from io import BytesIO
-from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, PageBreak
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.graphics.barcode import code128
-from reportlab.lib.units import mm, cm
-# from reportlab.pdfgen import canvas
-from reportlab.platypus import Table
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
-import os
 import hashlib
-import io
+import os
+import time
 from io import BytesIO
-
-from reportlab.pdfgen import canvas
-
-from reportlab.graphics.barcode import qr
-from reportlab.graphics.shapes import Drawing
 
 import qrcode
-from PIL import Image
+from django.core.files import File
+from django.http import HttpResponse
+from reportlab.graphics.barcode import code128
+from reportlab.graphics.barcode import qr
+from reportlab.graphics.shapes import Drawing
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import mm, cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, PageBreak
+from reportlab.platypus import Table
+
+from registro.models import Periodo, Distributivo, Docente
+from registro.servicios import Servicios
+from tutoria.models import Firma, ReporteTutoria, Tarjeta
+from SRDM.util import get_parcial, get_IP
 
 # Create your views here.
-from PyPDF2 import PdfFileWriter, PdfFileReader
-from reportlab.lib.pagesizes import letter
-from django.core.files import File
 
-PARCIAL = 2
-IP='172.17.42.144'
+PARCIAL = get_parcial()
+IP = get_IP()
 servicios = Servicios()
 
 
 class Servicios_t(object):
 
-    def get_cedula(self,user):
-        cedula=Docente.objects.filter(usuario=user).values("cedula")
+    def get_cedula(self, user):
+        cedula = Docente.objects.filter(usuario=user).values("cedula")
         for i in cedula:
             print(i['cedula'])
-        print("cedula",i['cedula'])
+        print("cedula", i['cedula'])
         return i['cedula']
 
-    def set_qr_hash_url(self,docente,qr_hash,url):
+    def set_qr_hash_url(self, docente, qr_hash, url):
         docente_id = Docente.objects.filter(usuario=docente).values("id")
-        url_aux="http://"+str(url)
+        url_aux = str(url)
         for i in docente_id:
-            docente_aux=i['id']
-        print("docente_id",docente_aux)
-        t=Tarjeta.objects.filter(docente_id=docente_aux)
+            docente_aux = i['id']
+        print("docente_id", docente_aux)
+        t = Tarjeta.objects.filter(docente_id=docente_aux)
 
-        print("existe",t.exists())
+        print("existe", t.exists())
         if t.exists() is False:
-            t=Tarjeta(
+            t = Tarjeta(
                 docente_id=docente_aux,
                 hash=qr_hash,
-                url=url_aux,
+                url=url_aux
             )
             t.save()
         else:
             t_aux = Tarjeta.objects.get(docente_id=docente_aux)
-            t_aux.url=url_aux
-            t_aux.hash=qr_hash
+            t_aux.url = url_aux
+            t_aux.hash = qr_hash
             t_aux.save()
         print("guarda hash")
         return
 
+    def crear_directorio_qr(self, periodo, docente):
 
-
-
-
-    def crear_directorio_qr(self,periodo,docente):
-
-
-        path="./media/qrs"+"/"+str(periodo)
+        path = "./media/qrs" + "/" + str(periodo)
         print(path)
         if not os.path.exists(path):
             os.makedirs(path)
         return str(path)
 
-    def generar_qr_png(self,enlace,output):
-
+    def generar_qr_png(self, enlace, output):
         qr = qrcode.QRCode(box_size=4)
         qr.add_data(enlace)
         qr.make()
-        img=qr.make_image()
-
-
-        #img = qrcode.make(enlace)
-
+        img = qr.make_image()
+        # img = qrcode.make(enlace)
         img.save(output)
-
         return
 
-    def generar_hash(self,cedula):
-        codigo_hash=hashlib.sha224(str(cedula).encode()).hexdigest()
-        print("codigo_hash",codigo_hash)
+    def generar_hash(self, cedula):
+        codigo_hash = hashlib.sha224(str(cedula).encode()).hexdigest()
+        print("codigo_hash", codigo_hash)
         return codigo_hash
 
     def get_num_tutorias(self, estudiante, parcial, periodo, distributivo_id):
@@ -118,7 +96,6 @@ class Servicios_t(object):
         observacion = Firma.objects.filter(reporte__distributivo_id=distributivo_id, estudiante=estudiante,
                                            reporte__parcial=parcial,
                                            reporte__distributivo__periodo=periodo).values_list('tema', flat=True)
-
         print("temas:", observacion)
         return observacion
 
@@ -127,15 +104,6 @@ class Servicios_t(object):
                                           reporte__distributivo__periodo=periodo).values_list('id', flat=True)
         print(informe_id)
         hora_inicio = []
-        # for i in informe_id:
-        # print("**informe_id**",i['id'])
-        # hora = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_inicio', flat=True)[0].hour
-        # minuto = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_inicio', flat=True)[0].minute
-        # second = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_inicio', flat=True)[0].second
-        # inicio = str(hora) + ":" + str(minuto)
-        # hora_inicio.append(inicio)
-        # print("hora inicio:", inicio)
-        # print("hora inicio",hora_aux)
         return hora_inicio
 
     def get_fin(self, estudiante, parcial, periodo):
@@ -143,15 +111,6 @@ class Servicios_t(object):
                                           reporte__distributivo__periodo=periodo).values_list('id', flat=True)
         print(informe_id)
         hora_fin = []
-        # for i in informe_id:
-        #     # print("**informe_id**",i['id'])
-        #     hora = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_fin', flat=True)[0].hour
-        #     minuto = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_fin', flat=True)[0].minute
-        #     second = Horario.objects.filter(pk=i).values_list('distributivo__horario__hora_fin', flat=True)[0].second
-        #     fin = str(hora) + ":" + str(minuto)
-        #     hora_fin.append(fin)
-        #     # print("hora inicio:", inicio)
-        # print("hora inicio",hora_aux)
         return hora_fin
 
     def get_dia(self, estudiante, parcial, periodo):
@@ -159,23 +118,15 @@ class Servicios_t(object):
                                           reporte__distributivo__periodo=periodo).values_list('id', flat=True)
         print(informe_id)
         dia_aux = []
-        # for i in informe_id:
-        #     # print("**informe_id**",i['id'])
-        #     dia = Horario.objects.filter(pk=i).values_list('distributivo__horario__dia', flat=True)[0]
-        #
-        #     dia_aux.append(dia)
-        #     # print("hora inicio:", inicio)
         print("hora inicio", dia_aux)
         return dia_aux
 
     def get_timestamp(self, estudiante, parcial, periodo, distributivo_id):
-        # time_stamp=Firma.objects.filter(reporte__distributivo_id=distributivo_id,estudiante=estudiante,reporte__parcial=parcial,reporte__distributivo__periodo=periodo).values_list('timestamp',flat=True)
         time_stamp = Firma.objects.filter(reporte__distributivo_id=distributivo_id, estudiante=estudiante,
                                           reporte__parcial=parcial, reporte__distributivo__periodo=periodo)
         lista = []
         for i in time_stamp:
             lista.append(i.timestamp.strftime("%Y-%m-%d %H:%M:%S"))
-        # fecha = str(time_stamp.strftime("%Y-%m-%d %H:%M:%S"))
         return lista
 
     def get_duracion(self, estudiante, parcial, periodo, distributivo_id):
@@ -201,7 +152,6 @@ class Servicios_t(object):
         materia = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.nombre
         codigo = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.codigo
         grupo = Distributivo.objects.filter(pk=distributivo_id)[0].grupo
-        # grupo=Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.
         nombre_docente = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo, )[
             0].docente.usuario.nombre()
         carrera = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.carrera
@@ -218,7 +168,7 @@ class Servicios_t(object):
             "fecha": fecha,
             "parcial": PARCIAL,
         }
-        print("*****datos*******", datos)
+        # print("*****datos*******", datos)
         return datos
 
     def createqr(self, enlace):
@@ -236,8 +186,6 @@ class Servicios_t(object):
     #
     def sethash(self, materia, tipo):
         # modificado para parcial 2
-        # i=Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo)
-        print("######", tipo)
         i = ReporteTutoria.objects.filter(distributivo_id=materia, parcial=PARCIAL)
         if len(i) != 0:
             print("hashh", i)
@@ -262,16 +210,11 @@ class Servicios_t(object):
         # ************** se obtiene los alumnos por el id de distributivo ************
         for q in (servicios.getalumnos(distributivo_id)):
             elemento = []
-
             print(q.estudiante_id)
-
             nombre = q.estudiante
             cedula = q.estudiante.cedula
-
             elemento.append(nombre)
-
             tutorias = self.get_num_tutorias(q.estudiante_id, PARCIAL, periodo, distributivo_id)
-
             temas = self.get_observacion(q.estudiante_id, PARCIAL, periodo, distributivo_id)
             timestamp = self.get_timestamp(q.estudiante_id, PARCIAL, periodo, distributivo_id)
             duracion = self.get_duracion(q.estudiante_id, PARCIAL, periodo, distributivo_id)
@@ -282,7 +225,6 @@ class Servicios_t(object):
 
             for i in duracion:
                 duracion_aux.append(i)
-
             elemento.append(tutorias)
             datos.append(elemento)
             for i in temas:
@@ -393,41 +335,15 @@ class Servicios_t(object):
             cedula = q['cedula']
             nombre_estudiante = q['nombre']
             numero_tutorias = q['num_tutorias']
-            #   tutorias=q
-            #
-            #         cedula = q.estudiante.cedula
-            #         tutorias = servicios_t.get_num_tutorias(cedula)
-            #         observaciones=servicios_t.get_observacion(cedula)
-            #         inicio=servicios_t.get_inicio(cedula)
-            #         fin=servicios_t.get_fin(cedula)
-            #         dia=servicios_t.get_dia(cedula)
-            #         #print("********dia",dia)
-            #         # print(cedula)
-            #         valid = servicios.validardocumentos(q.pk, tipo)
-            #         #valid="True"
-            #         if valid == "True":
             for i in range(0, numero_tutorias):
                 print("temas", q['temas'][i])
                 print("fechas", q['fecha'][i])
                 print("duracion", q['duracion'][i])
-
-                #                 #print("*****i",inicio[i])
-                #                 #print("****f",fin[i])
-                #                 #print("***o",observaciones[i])
-                #                 #print("***d",dia[i])
                 allclientes = (nombre_estudiante, cedula,
                                q['temas'][i], q['fecha'][i], q['duracion'][i],
                                code128.Code128(cedula, barHeight=2 * mm, barWidth=0.6))
-                #
-                #
-                #                 allclientes2.append(allclientes)
                 allclientes2.append(allclientes)
-        #             #print("clientes",allclientes2)
-        #     #print("***clientes***", allclientes2)
-        #
-        #     # clientes.append(header3)
         ################################################################
-
         headings2 = ('', '')
         # docente_nombre = docente
         # materiaid = materia
@@ -539,7 +455,7 @@ class Servicios_t(object):
         buff1.close()
 
         s = self.sethash(distributivo, tipo)
-        if s != None:
+        if s is not None:
             s.hash = hash
             s.fecha_generacion = time.strftime("%Y-%m-%d %H:%M:%S")
             s.archivo = url

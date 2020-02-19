@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Tarjeta, ReporteTutoria, Firma
+from .models import Tarjeta, ReporteTutoria, Firma, Parametro
 
 
 # Register your models here.
 
 class TarjetaAdmin(admin.ModelAdmin):
     model = Tarjeta
-    list_display = 'archivo', 'docente', 'hash'
+    list_display = 'docente', 'hash'
     search_fields = ['docente__usuario__first_name', 'docente__usuario__last_name']
 
 
@@ -27,6 +27,13 @@ class FirmaAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
 
 
+class ParametroAdmin(admin.ModelAdmin):
+    model = Parametro
+    list_display = 'clave', 'valor'
+    search_fields = ['clave']
+
+
 admin.site.register(Tarjeta, TarjetaAdmin)
 admin.site.register(ReporteTutoria, ReporteTutoriaAdmin)
 admin.site.register(Firma, FirmaAdmin)
+admin.site.register(Parametro, ParametroAdmin)

@@ -1,46 +1,31 @@
-from registro.models import Estudiante, Alumno, Materia, Carrera, Docente, Distributivo, Periodo, Informe, Documento, \
-    Firma, ValidarFirma
-from django.contrib.auth import get_user
-from reportlab.graphics.barcode import code128
-from reportlab.lib.units import mm
-#
-from tutoria.models import Firma, ReporteTutoria
-#
-#from tutoria.servicios_t import Servicios_t
-import time
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-
-from django.http import HttpResponse
-
-from django.shortcuts import render, redirect
-from io import BytesIO
-from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, PageBreak
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.graphics.barcode import code128
-from reportlab.lib.units import mm, cm
-# from reportlab.pdfgen import canvas
-from reportlab.platypus import Table
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
-
 import hashlib
-import io
+#
+# from tutoria.servicios_t import Servicios_t
+import time
 from io import BytesIO
-
-from reportlab.pdfgen import canvas
-
-from reportlab.graphics.barcode import qr
-from reportlab.graphics.shapes import Drawing
 
 # Create your views here.
-from PyPDF2 import PdfFileWriter, PdfFileReader
-from reportlab.lib.pagesizes import letter
 from django.core.files import File
-import os
-#servicios_t=Servicios_t()
-PARCIAL=2
+from django.http import HttpResponse
+from reportlab.graphics.barcode import code128
+from reportlab.graphics.barcode import qr
+from reportlab.graphics.shapes import Drawing
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import mm, cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle, PageBreak
+# from reportlab.pdfgen import canvas
+from reportlab.platypus import Table
+
+from registro.models import Estudiante, Alumno, Materia, Carrera, Docente, Distributivo, Periodo, Informe, Documento
+from tutoria.models import ReporteTutoria
+from SRDM.util import get_parcial
+
+# servicios_t=Servicios_t()
+PARCIAL = get_parcial()
+
 
 class Servicios(object):
     # Funcion que devuelve el nombre del usuario
@@ -51,9 +36,9 @@ class Servicios(object):
             pass
 
     # Funcion que devuelve las materias de un docente
-    def getmaterias(self, docente,periodo):
+    def getmaterias(self, docente, periodo):
         try:
-            return (Distributivo.objects.filter(docente=docente,periodo=periodo))
+            return (Distributivo.objects.filter(docente=docente, periodo=periodo))
         except Exception as e:
             pass
 
@@ -68,8 +53,8 @@ class Servicios(object):
     # Funcion que devuelve los detalles de una carrera
     def carrera_detalles(self, id):
         try:
-            periodo=Periodo.objects.filter(activo=True).first()
-            return (Distributivo.objects.filter(periodo_id=periodo,materia_id=id).values())
+            periodo = Periodo.objects.filter(activo=True).first()
+            return (Distributivo.objects.filter(periodo_id=periodo, materia_id=id).values())
         except Exception as e:
             pass
 
@@ -91,10 +76,10 @@ class Servicios(object):
     def getalumnos(self, distributivo_id):
         try:
             periodo = Periodo.objects.filter(activo=True).first()
-            #d = Distributivo.objec 
-            d = Distributivo.objects.filter(pk=distributivo_id,periodo_id=periodo)[0].id
-            print("----distributivo----",d)
-            #modificado periodo 2
+            # d = Distributivo.objec
+            d = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].id
+            print("----distributivo----", d)
+            # modificado periodo 2
 
             return Alumno.objects.filter(distributivo=d)
 
@@ -132,31 +117,30 @@ class Servicios(object):
         else:
             return False
 
-    def sethash(self,materia,tipo):
-        #modificado para parcial 2
-        #i=Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo)
-        print("######",tipo)
+    def sethash(self, materia, tipo):
+        # modificado para parcial 2
+        # i=Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo)
+        print("######", tipo)
         i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo, parcial=PARCIAL)
 
-        print("hashh",i)
+        print("hashh", i)
         return i[0]
 
     def verificar_estado_informe(self, materia, tipo):
         print(materia)
-        #i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo)
-        #i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
-        periodo=Periodo.objects.filter(activo=True).first()
-        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo,parcial=PARCIAL).values()
-        print("tipo///",tipo)
-        print("////estado",i)
-        if len(i)!=0:
+        # i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo)
+        # i = Informe.objects.filter(distributivo_id=materia,documento__codigo=tipo).values()
+        periodo = Periodo.objects.filter(activo=True).first()
+        i = Informe.objects.filter(distributivo_id=materia, documento__codigo=tipo, parcial=PARCIAL).values()
+        print("tipo///", tipo)
+        print("////estado", i)
+        if len(i) != 0:
 
             print(i.first()['estado'])
             return i.first()
         else:
             print("resultado nulo")
             return None
-
 
     def getinforme(self, alumno):
 
@@ -169,30 +153,31 @@ class Servicios(object):
         print(doc)
         return doc
 
-    def crear_directorio(self,periodo,carrera,docente,materia,grupo):
-        path="./media/documents/firmados"+"/"+"P"+str(periodo)+"/"+str(carrera)+"/"+str(docente)+"/"+str(materia)+" - G"+str(grupo)+"/"
+    def crear_directorio(self, periodo, carrera, docente, materia, grupo):
+        path = "./media/documents/firmados" + "/" + "P" + str(periodo) + "/" + str(carrera) + "/" + str(
+            docente) + "/" + str(materia) + " - G" + str(grupo) + "/"
         print(path)
         return str(path)
 
-    def validar_materia_docente(self,distributivo_id,docente):
-         val=Docente.objects.filter(distributivo=distributivo_id)
-         print("validacion docente",val.first())
-         print("docente",docente)
-         if val.first()==docente:
-            validacion=True
-         else:
-            validacion=False
-         return validacion
+    def validar_materia_docente(self, distributivo_id, docente):
+        val = Docente.objects.filter(distributivo=distributivo_id)
+        print("validacion docente", val.first())
+        print("docente", docente)
+        if val.first() == docente:
+            validacion = True
+        else:
+            validacion = False
+        return validacion
 
     def validardocumentos(self, alumno, tipo):
         servicios = Servicios()
         alu = Estudiante.objects.filter(cedula=alumno).values('id')
         valid = "False"
         # documentos=Documento.objects.filter(informe__firma__alumno_id__in=alu)
-        #documentos = Documento.objects.filter(informe__firma__alumno_id=alumno)
-        documentos = Documento.objects.filter(informe__firma__alumno_id=alumno,informe__parcial=PARCIAL)
+        # documentos = Documento.objects.filter(informe__firma__alumno_id=alumno)
+        documentos = Documento.objects.filter(informe__firma__alumno_id=alumno, informe__parcial=PARCIAL)
         #############################################################################################
-        #modificado parcial 2
+        # modificado parcial 2
         print(documentos)
         if len(documentos) != 0:
             for m in documentos:
@@ -215,23 +200,20 @@ class Servicios(object):
 
         hash_doc = Informe.objects.filter(hash=hash_id).values("hash").exists()
 
-        if hash_doc==True:
+        if hash_doc == True:
 
             return hash_doc
 
-        elif hash_doc==False:
+        elif hash_doc == False:
 
             hash_doc = ReporteTutoria.objects.filter(hash=hash_id).values("hash").exists()
 
-            if hash_doc==True:
+            if hash_doc == True:
 
                 return hash_doc
             else:
-                hash_doc=None
+                hash_doc = None
                 return hash_doc
-
-
-
 
     def createqr(self, enlace):
 
@@ -245,14 +227,15 @@ class Servicios(object):
         drawing.add(qr_code)
 
         return drawing
-#
+
+    #
 
     def get_pdf(self, docente, distributivo_id, tipo):
         periodo = Periodo.objects.filter(activo=True).first()
-        materia=Distributivo.objects.filter(pk=distributivo_id,periodo_id=periodo)[0].materia.nombre
+        materia = Distributivo.objects.filter(pk=distributivo_id, periodo_id=periodo)[0].materia.nombre
         periodo = Periodo.objects.filter(activo=True).first()
         servicios = Servicios()
-        #materias = servicios.getmaterias(docente,periodo)
+        # materias = servicios.getmaterias(docente,periodo)
         materia_detalles = servicios.materia_detalles(materia)
         validar = servicios.validardocente(docente, materia)
         print(validar)
@@ -266,8 +249,8 @@ class Servicios(object):
         id_materia = materia_detalles[0].get('id')
 
         carrera_detalles = servicios.carrera_detalles(id_materia)
-        grupo= Distributivo.objects.filter(pk=distributivo_id)[0].grupo
-        #grupo = carrera_detalles[0].get('grupo')
+        grupo = Distributivo.objects.filter(pk=distributivo_id)[0].grupo
+        # grupo = carrera_detalles[0].get('grupo')
         periodo_id = carrera_detalles[0].get('periodo_id')
         periodo_detalles = servicios.periodo_detalles(periodo_id)
         periodo_numero = periodo_detalles[0].get('numero')
@@ -293,7 +276,7 @@ class Servicios(object):
         clientes1 = []
         styles = getSampleStyleSheet()
         styles.add(ParagraphStyle(name="ejemplo", aligment=TA_CENTER, fontSize=8,
-                                  fontName="Times-Bold",spaceBefore=24,spaceAfter=0))
+                                  fontName="Times-Bold", spaceBefore=24, spaceAfter=0))
         ##################################################################################3
         doc = SimpleDocTemplate(buff,
                                 pagesize=A4,
@@ -308,7 +291,7 @@ class Servicios(object):
                                   fontName="Times-Bold"))
 
         if tipo == "REVEX":
-            #headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+            # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             print("----------revex--------------")
@@ -317,9 +300,10 @@ class Servicios(object):
             fecha = servicios.getFecha()
 
             documentoid = str(
-                #modificado periodo 2    ####################################################################################
-                #documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))
+                # modificado periodo 2    ####################################################################################
+                # documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(
+                    fecha) + "-" + str(PARCIAL))
             # print(documentoid)
             # print("Genero el PDF")
             response = HttpResponse(content_type='application/pdf')
@@ -352,13 +336,14 @@ class Servicios(object):
 
         elif tipo == "ADM":
             print("---------------adm--------------")
-            #headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+            # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "ADM"
             fecha = servicios.getFecha()
             documentoid = str(
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(
+                    fecha) + "-" + str(PARCIAL))
             # documentoid = str(documento+"-"+str(codigo)+"-"+str(grupo)+"-"+str(periodo_numero)+"-"+ time.strftime("%Y-%m-%d %H:%M:%S"))
             # documentoid = str(documento + time.strftime("%Y-%m-%d %H:%M:%S"))
             # print(documentoid)
@@ -376,9 +361,9 @@ class Servicios(object):
             header4 = Paragraph("<br/> <br/>", styles['ejemplo'])
             clientes.append(header)
             clientes.append(header2)
-            #alumnos = servicios.getalumnos(id_materia)
+            # alumnos = servicios.getalumnos(id_materia)
             alumnos = servicios.getalumnos(distributivo_id)
-            print("alumnos",alumnos)
+            print("alumnos", alumnos)
             for q in alumnos:
                 cedula = q.estudiante.cedula
                 # print(cedula)
@@ -394,15 +379,16 @@ class Servicios(object):
 
         elif tipo == "RN30":
             print("-------------------rn30----------")
-           # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
+            # headings = ('Nombre del Estudiante', 'No de cédula', 'Firma')
             allclientes = []
             allclientes2 = []
             documento = "RN30"
             fecha = servicios.getFecha()
             documentoid = str(
-                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha)+"-"+str(PARCIAL))    
-                #modificado periodo2
-                #documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
+                documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(
+                    fecha) + "-" + str(PARCIAL))
+            # modificado periodo2
+            # documento + "-" + str(codigo) + "-" + str(grupo) + "-" + str(periodo_numero) + "-" + str(fecha))
 
             # print(documentoid)
             # print("Genero el PDF")
@@ -419,12 +405,12 @@ class Servicios(object):
             clientes.append(header2)
             clientes.append(header4)
 
-            #alumnos = servicios.getalumnos(id_materia)
+            # alumnos = servicios.getalumnos(id_materia)
             alumnos = servicios.getalumnos(distributivo_id)
             # print(alumnos)
-            
+
             for q in alumnos:
-                
+
                 cedula = q.estudiante.cedula
                 # print(cedula)
                 valid = servicios.validardocumentos(q.pk, tipo)
@@ -432,7 +418,6 @@ class Servicios(object):
                     allclientes = (q.estudiante, q.estudiante.cedula,
                                    code128.Code128(q.estudiante.cedula, barHeight=3 * mm, barWidth=1))
                     allclientes2.append(allclientes)
-                
 
             print("***clientes***", allclientes2)
 
@@ -499,7 +484,7 @@ class Servicios(object):
         #     #print("***clientes***", allclientes2)
         #
         #     # clientes.append(header3)
-            ################################################################
+        ################################################################
 
         headings2 = ('', '')
         docente_nombre = docente
@@ -527,7 +512,7 @@ class Servicios(object):
 
         print(allclientes2)
 
-        t = Table([headings] + allclientes2,repeatRows=0)
+        t = Table([headings] + allclientes2, repeatRows=0)
         t.setStyle(TableStyle(
             [
                 ('GRID', (0, 0), (3, -1), 1, colors.black),
@@ -538,7 +523,7 @@ class Servicios(object):
 
         # buff.close()
 
-        #id_docente = Paragraph("<br/> Firmado por: " + str(docente_nombre) + " <br/> <br/>", styles['ejemplo'])
+        # id_docente = Paragraph("<br/> Firmado por: " + str(docente_nombre) + " <br/> <br/>", styles['ejemplo'])
         id_docente = Paragraph("Firmado por: " + str(docente_nombre), styles['ejemplo'])
         # hash_1 = Paragraph("Documento ID: " + hash + " <br/>", styles['ejemplo'])
         fecha = Paragraph("Fecha:" + str(time.strftime("%Y-%m-%d")), styles['ejemplo'])
@@ -588,12 +573,12 @@ class Servicios(object):
         response.write(buff1.getvalue())
         ip = "172.17.42.144"
         directorio = servicios.crear_directorio(periodo_numero, nombre_carrera, docente_nombre, materia_nombre, grupo)
-        #path = "./media/documents/firmados"
-        #path_id = str(path + pdf_name + ".pdf")
+        # path = "./media/documents/firmados"
+        # path_id = str(path + pdf_name + ".pdf")
         url = "http://" + str(ip) + "/" + directorio + pdf_name + ".pdf"
-        #url = "http://" + str(ip) + "/" + "media/documents/firmados/" + pdf_name + ".pdf"
-        print("URL",url)
-        with open(directorio +pdf_name + ".pdf", 'wb') as f:
+        # url = "http://" + str(ip) + "/" + "media/documents/firmados/" + pdf_name + ".pdf"
+        print("URL", url)
+        with open(directorio + pdf_name + ".pdf", 'wb') as f:
             myfile = File(f)
             f = open(directorio + pdf_name + ".pdf", 'wb')
             myfile = File(f)
@@ -606,7 +591,7 @@ class Servicios(object):
 
         s = servicios.sethash(distributivo_id, documento)
 
-        s.hash= hash
+        s.hash = hash
         s.fecha_generacion = time.strftime("%Y-%m-%d %H:%M:%S")
         s.archivo = url
         s.estado = "C"

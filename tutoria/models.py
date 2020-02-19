@@ -5,13 +5,12 @@ from registro.models import Distributivo, Docente, Estudiante
 # Create your models here.
 
 class Tarjeta(models.Model):
-    archivo = models.CharField(max_length=7, null=True, unique=True)
     hash = models.CharField(max_length=512, null=True, blank=True)
     docente = models.ForeignKey(Docente, on_delete=models.CASCADE, null=True)
     url = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return self.codigo + " " + self.docente.usuario.nombre()
+        return "Tarjeta de " + self.docente.usuario.nombre()
 
 
 class ReporteTutoria(models.Model):
@@ -38,3 +37,11 @@ class Firma(models.Model):
 
     def __str__(self):
         return self.estudiante.usuario.nombre()
+
+
+class Parametro(models.Model):
+    clave = models.CharField(max_length=32, unique=True)
+    valor = models.TextField()
+
+    def __str__(self):
+        return self.clave + " - " + self.valor[0:20]

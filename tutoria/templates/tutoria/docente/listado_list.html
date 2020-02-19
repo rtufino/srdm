@@ -36,11 +36,10 @@
 <div class="row">
     <div class="col-sm">
          <div class="btn-group" role="group" aria-label="Basic example">
-            <a href="{% url 'tutoria_docente:generar_qr' %}" target="_blank" class="btn btn-success">
+            <a href="{% url 'tutoria_docente:generar_qr' %}" class="btn btn-success">
                 Generar QR</a>
-
         </div>
-        <a href="{%  url 'tutoria_docente:home' %}" class="btn btn-primary">Dashboard</a>
+        <a href="{%  url 'home' %}" class="btn btn-primary">Dashboard</a>
     </div>
 </div>
 {% endblock %}
