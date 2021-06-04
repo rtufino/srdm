@@ -1,4 +1,4 @@
-Django==2.2.10
+Django==2.2.21
 django-bootstrap-form==3.4
 django-bootstrap4==0.0.8
 django-extensions==2.1.6
