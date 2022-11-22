@@ -2,7 +2,7 @@ Django==2.2.10
 django-bootstrap-form==3.4
 django-bootstrap4==0.0.8
 django-extensions==2.1.6
-Pillow==6.2.1
+Pillow==9.3.0
 psycopg2-binary==2.7.7
 pydotplus==2.0.2
 # pygraphviz==1.5
